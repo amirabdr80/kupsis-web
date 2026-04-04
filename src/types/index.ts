@@ -30,8 +30,10 @@ export interface FutureActivity {
 
 export interface PhotoGroup {
   id: string
-  title: string
-  event_date?: string
+  name: string
+  description?: string
+  date?: string
+  cover_url?: string
   sort_order?: number
   photos?: Photo[]
   created_at?: string
@@ -40,9 +42,9 @@ export interface PhotoGroup {
 export interface Photo {
   id: string
   group_id: string
-  storage_path: string
+  url: string
+  caption?: string
   sort_order?: number
-  url?: string
 }
 
 export interface CalendarOverride {

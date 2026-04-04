@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { X, Upload, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
-import { supabase, getPhotoUrl, STORAGE_BUCKET } from '../lib/supabase'
+import { supabase, STORAGE_BUCKET } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { PhotoGroup, Photo } from '../types'
 
@@ -24,17 +24,14 @@ export default function GalleryPage() {
     const { data: groupData } = await supabase
       .from('photo_groups')
       .select('*, photos(*)')
-      .order('event_date', { ascending: true, nullsFirst: false })
+      .order('date', { ascending: true, nullsFirst: false })
       .order('sort_order', { ascending: true })
     if (groupData) {
-      const withUrls = groupData.map(g => ({
+      const sorted = groupData.map(g => ({
         ...g,
-        photos: (g.photos || []).sort((a: Photo, b: Photo) => (a.sort_order || 0) - (b.sort_order || 0)).map((p: Photo) => ({
-          ...p,
-          url: getPhotoUrl(p.storage_path),
-        }))
+        photos: (g.photos || []).sort((a: Photo, b: Photo) => (a.sort_order || 0) - (b.sort_order || 0))
       }))
-      setGroups(withUrls)
+      setGroups(sorted)
     }
     setLoading(false)
   }
@@ -42,8 +39,8 @@ export default function GalleryPage() {
   async function addGroup() {
     if (!newGroupTitle.trim()) return
     const { data } = await supabase.from('photo_groups').insert({
-      title: newGroupTitle.trim(),
-      event_date: newGroupDate || null,
+      name: newGroupTitle.trim(),
+      date: newGroupDate || null,
       sort_order: groups.length,
     }).select().single()
     if (data) {
@@ -58,10 +55,12 @@ export default function GalleryPage() {
     if (!confirm('Padam kumpulan foto ini dan semua fotonya?')) return
     // Get photos to delete from storage
     const group = groups.find(g => g.id === groupId)
+    // storage paths for admin-uploaded photos follow groupId/filename pattern
     if (group?.photos) {
-      for (const ph of group.photos) {
-        await supabase.storage.from(STORAGE_BUCKET).remove([ph.storage_path])
-      }
+      const paths = group.photos
+        .map((ph: Photo) => ph.url)
+        .filter((u: string) => u && !u.startsWith('http'))
+      if (paths.length) await supabase.storage.from(STORAGE_BUCKET).remove(paths)
     }
     await supabase.from('photo_groups').delete().eq('id', groupId)
     setGroups(prev => prev.filter(g => g.id !== groupId))
@@ -78,14 +77,14 @@ export default function GalleryPage() {
       const path = `${groupId}/${Date.now()}_${i}.${ext}`
       const { error: uploadErr } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file)
       if (uploadErr) continue
-      await supabase.from('photos').insert({ group_id: groupId, storage_path: path, sort_order: existingCount + i })
+      const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path)
+      await supabase.from('photos').insert({ group_id: groupId, url: urlData.publicUrl, sort_order: existingCount + i })
     }
     setUploadingGroupId(null)
     loadGallery()
   }
 
-  async function deletePhoto(photoId: string, storagePath: string) {
-    await supabase.storage.from(STORAGE_BUCKET).remove([storagePath])
+  async function deletePhoto(photoId: string) {
     await supabase.from('photos').delete().eq('id', photoId)
     setGroups(prev => prev.map(g => ({ ...g, photos: (g.photos || []).filter((p: Photo) => p.id !== photoId) })))
   }
@@ -156,9 +155,9 @@ export default function GalleryPage() {
             <div key={group.id} className="card">
               <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
                 <div>
-                  <h2 className="font-bold text-primary text-base">{group.title}</h2>
-                  {group.event_date && (
-                    <p className="text-gray-400 text-xs mt-0.5">{new Date(group.event_date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <h2 className="font-bold text-primary text-base">{group.name}</h2>
+                  {group.date && (
+                    <p className="text-gray-400 text-xs mt-0.5">{new Date(group.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                   )}
                   <p className="text-gray-400 text-xs">{(group.photos || []).length} foto</p>
                 </div>
@@ -201,7 +200,7 @@ export default function GalleryPage() {
                       />
                       {isAdmin && (
                         <button
-                          onClick={() => deletePhoto(ph.id, ph.storage_path)}
+                          onClick={() => deletePhoto(ph.id)}
                           className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X size={11} />
