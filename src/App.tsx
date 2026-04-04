@@ -13,8 +13,8 @@ import AdminPage from './pages/AdminPage'
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth()
   if (loading) return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="text-primary font-semibold text-lg">Memuatkan...</div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: '#b34700', fontWeight: 600, fontSize: '1.1rem' }}>
+      Memuatkan...
     </div>
   )
   return isAdmin ? <>{children}</> : <Navigate to="/login" replace />
@@ -22,9 +22,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#fdf6f0' }}>
       <Navbar />
-      <main className="flex-1">
+      <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/"           element={<HomePage />} />
           <Route path="/calendar"   element={<CalendarPage />} />
@@ -36,8 +36,8 @@ export default function App() {
           <Route path="/admin"      element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>
       </main>
-      <footer className="text-white text-center text-xs py-3 mt-8" style={{ background: 'linear-gradient(135deg, #8a3200, #e8671a)' }}>
-        KUPSIS Road to SPM 2026 · F5 Salahuddin Al-Ayubi · KSIB
+      <footer style={{ background: 'linear-gradient(135deg, #8a3200, #e8671a)', color: 'white', textAlign: 'center', fontSize: '0.8rem', padding: '14px 24px', marginTop: 'auto' }}>
+        © 2026 SM Sains Kubang Pasu · Batch Salahuddin Al-Ayubi · KSIB · Dashboard SPM 2026
       </footer>
     </div>
   )

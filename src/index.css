@@ -4,35 +4,93 @@
 
 @layer base {
   html { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { @apply bg-gray-50 text-gray-800; }
+  body { background: #fdf6f0; color: #2c1a0e; }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-secondary transition-colors text-sm;
-  }
-  .btn-secondary {
-    @apply bg-white text-primary border border-primary px-4 py-2 rounded-lg font-semibold hover:bg-orange-50 transition-colors text-sm;
-  }
-  .btn-danger {
-    @apply bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors text-sm;
-  }
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-5;
-  }
-  .input {
-    @apply w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
-  }
-  .label {
-    @apply block text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide;
-  }
-  .badge-green  { @apply inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full; }
-  .badge-blue   { @apply inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full; }
-  .badge-orange { @apply inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full; }
-  .badge-red    { @apply inline-block bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full; }
-  .badge-gray   { @apply inline-block bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full; }
 
-  .section-title {
-    @apply text-xl font-bold text-primary border-b-4 border-accent pb-2 mb-5 inline-block;
+  /* ── Cards ── */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border: 1px solid #f0d5bc;
+    margin-bottom: 20px;
   }
+  .card-title {
+    @apply text-base font-bold mb-4 pb-3 flex items-center gap-2;
+    color: #b34700;
+    border-bottom: 2px solid #fff3e8;
+  }
+
+  /* ── Stat boxes (match original exactly) ── */
+  .stat-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border: 1px solid #f0d5bc;
+    border-top: 4px solid #e8671a;
+  }
+  .stat-box.green  { border-top-color: #1e8449; }
+  .stat-box.orange { border-top-color: #f5a623; }
+  .stat-box.red    { border-top-color: #c0392b; }
+  .stat-num   { font-size: 2rem; font-weight: 800; color: #b34700; }
+  .stat-label { font-size: 0.8rem; color: #8a6040; margin-top: 4px; font-weight: 500; }
+
+  /* ── Buttons ── */
+  .btn-add    { @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-sm text-white cursor-pointer border-none; background: #1e8449; }
+  .btn-add:hover { background: #166039; }
+  .btn-edit   { @apply px-2.5 py-1 rounded text-xs font-semibold text-white cursor-pointer border-none; background: #2e86c1; }
+  .btn-edit:hover { background: #1a5276; }
+  .btn-del    { @apply px-2.5 py-1 rounded text-xs font-semibold text-white cursor-pointer border-none; background: #c0392b; }
+  .btn-del:hover { background: #922b21; }
+  .btn-save   { @apply px-6 py-2 rounded-lg font-bold text-white cursor-pointer border-none; background: #b34700; }
+  .btn-save:hover { background: #8a3200; }
+  .btn-cancel { @apply px-5 py-2 rounded-lg font-semibold cursor-pointer border-none; background: #f2f3f4; color: #2c1a0e; }
+
+  /* ── Badges ── */
+  .badge { @apply inline-block px-2.5 py-0.5 rounded-xl text-xs font-semibold; }
+  .badge-green  { background: #d4efdf; color: #1e8449; }
+  .badge-orange { background: #fdebd0; color: #d35400; }
+  .badge-blue   { background: #d6eaf8; color: #e8671a; }
+  .badge-red    { background: #fadbd8; color: #c0392b; }
+  .badge-grey   { background: #f2f3f4; color: #8a6040; }
+
+  /* ── Tables ── */
+  .tbl-wrap { overflow-x: auto; }
+  .tbl { @apply w-full text-sm; border-collapse: collapse; }
+  .tbl th { background: #b34700; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+  .tbl td { padding: 9px 14px; border-bottom: 1px solid #f0d5bc; }
+  .tbl tr:hover td { background: #fff3e8; }
+  .tbl tr:last-child td { border-bottom: none; }
+
+  /* ── Progress ── */
+  .progress-bar  { height: 10px; background: #e8eaed; border-radius: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 6px; background: #e8671a; transition: width 0.4s; }
+  .progress-fill.green  { background: #1e8449; }
+  .progress-fill.orange { background: #f5a623; }
+
+  /* ── Section hero banner ── */
+  .section-hero {
+    background: linear-gradient(135deg, #8a3200, #e8671a);
+    color: white; border-radius: 12px; padding: 28px 32px;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 20px;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay { @apply hidden fixed inset-0 z-50 items-center justify-center; background: rgba(0,0,0,0.6); }
+  .modal-overlay.open { @apply flex; }
+  .modal-box { background: white; border-radius: 16px; padding: 28px; max-width: 680px; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.3); }
+
+  /* ── Form inputs ── */
+  .input {
+    @apply w-full px-3 py-2 text-sm rounded-lg border;
+    border-color: #f0d5bc;
+    font-family: inherit;
+  }
+  .input:focus { outline: none; border-color: #e8671a; box-shadow: 0 0 0 2px rgba(232,103,26,0.15); }
+  .label { @apply block text-xs font-semibold mb-1; color: #2c1a0e; }
 }

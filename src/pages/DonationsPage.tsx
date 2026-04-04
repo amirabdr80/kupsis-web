@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { Donation } from '../types'
@@ -27,8 +26,7 @@ export default function DonationsPage() {
     if (!form.amount || isNaN(Number(form.amount))) return
     setSaving(true)
     await supabase.from('donations').insert({ donor_name: form.donor_name || 'Tanpa Nama', amount: Number(form.amount), date: form.date, note: form.note })
-    setSaving(false)
-    setModal(false)
+    setSaving(false); setModal(false)
     setForm({ donor_name: '', amount: '', date: new Date().toISOString().split('T')[0], note: '' })
     load()
   }
@@ -40,95 +38,100 @@ export default function DonationsPage() {
   }
 
   const total = donations.reduce((s, d) => s + Number(d.amount), 0)
-  const progress = Math.min(100, (total / TARGET) * 100)
+  const pct   = Math.min(100, (total / TARGET) * 100)
 
-  if (loading) return <div className="text-center py-20 text-gray-400">Memuatkan...</div>
+  if (loading) return <div style={{ textAlign: 'center', padding: '60px 0', color: '#8a6040' }}>Memuatkan...</div>
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
+    <div style={{ maxWidth: 1300, margin: '0 auto', padding: '28px 24px' }}>
+      <div className="section-hero">
+        <div style={{ fontSize: '3rem' }}>💚</div>
         <div>
-          <h1 className="text-2xl font-bold text-primary">💚 Tabung Infaq SAA 2026</h1>
-          <p className="text-gray-500 text-sm mt-1">Kutipan dana KSIB F5 Salahuddin Al-Ayubi</p>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Tabung Infaq SAA 2026</h2>
+          <p style={{ opacity: 0.85, marginTop: 6, fontSize: '0.9rem' }}>Kutipan dana KSIB F5 Salahuddin Al-Ayubi · Sasaran: RM {TARGET.toLocaleString()}</p>
         </div>
-        {isAdmin && (
-          <button onClick={() => setModal(true)} className="btn-primary flex items-center gap-1">
-            <Plus size={16} /> Tambah Derma
-          </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
+        {/* Summary */}
+        <div className="card donation-card">
+          <div className="card-title"><span className="icon">📊</span> Ringkasan Tabung</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1e8449' }}>RM {total.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
+          <div style={{ fontSize: '0.85rem', color: '#8a6040' }}>daripada sasaran RM {TARGET.toLocaleString()}</div>
+          <div style={{ marginTop: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: 4 }}>
+              <span>Kemajuan</span><span>{pct.toFixed(1)}%</span>
+            </div>
+            <div className="progress-bar"><div className="progress-fill green" style={{ width: `${pct}%` }} /></div>
+          </div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 12, fontSize: '0.85rem', color: '#8a6040' }}>
+            <span>👥 {donations.length} penderma</span>
+            <span>💰 Baki: RM {Math.max(0, TARGET - total).toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Action */}
+        <div className="card">
+          <div className="card-title"><span className="icon">➕</span> Rekod Derma Baru</div>
+          {isAdmin ? (
+            <button className="btn-add" onClick={() => setModal(true)}>💚 Tambah Rekod Derma</button>
+          ) : (
+            <p style={{ color: '#8a6040', fontSize: '0.9rem' }}>Log masuk sebagai admin untuk menambah rekod derma.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="card">
+        <div className="card-title"><span className="icon">📋</span> Senarai Derma</div>
+        {donations.length === 0 ? (
+          <p style={{ color: '#8a6040', textAlign: 'center', padding: '40px 0' }}>Tiada rekod derma lagi.</p>
+        ) : (
+          <div className="tbl-wrap">
+            <table className="tbl">
+              <thead>
+                <tr><th>#</th><th>Nama Penderma</th><th>Jumlah</th><th>Tarikh</th><th>Nota</th>{isAdmin && <th>Tindakan</th>}</tr>
+              </thead>
+              <tbody>
+                {donations.map((d, i) => (
+                  <tr key={d.id}>
+                    <td style={{ color: '#8a6040' }}>{i + 1}</td>
+                    <td><strong>{d.donor_name || 'Tanpa Nama'}</strong></td>
+                    <td><strong style={{ color: '#1e8449' }}>RM {Number(d.amount).toFixed(2)}</strong></td>
+                    <td>{d.date ? new Date(d.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</td>
+                    <td style={{ color: '#8a6040' }}>{d.note || '—'}</td>
+                    {isAdmin && (
+                      <td><button className="btn-del" onClick={() => del(d.id)}>🗑️ Padam</button></td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
-      {/* Progress card */}
-      <div className="card mb-6">
-        <div className="flex justify-between items-end mb-2">
-          <div>
-            <div className="text-3xl font-bold text-primary">RM {total.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
-            <div className="text-gray-400 text-sm">daripada sasaran RM {TARGET.toLocaleString()}</div>
-          </div>
-          <div className="text-right">
-            <div className="text-xl font-bold text-accent">{progress.toFixed(1)}%</div>
-            <div className="text-gray-400 text-xs">{donations.length} penderma</div>
-          </div>
-        </div>
-        <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
-          <div className="bg-gradient-to-r from-primary to-accent h-full rounded-full transition-all duration-700" style={{ width: `${progress}%` }} />
-        </div>
-      </div>
-
-      {/* Donation list */}
-      {donations.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <div className="text-5xl mb-3">💚</div>
-          <p>Belum ada rekod derma.</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {donations.map(d => (
-            <div key={d.id} className="card flex items-center justify-between gap-3">
-              <div>
-                <div className="font-semibold text-gray-800">{d.donor_name || 'Tanpa Nama'}</div>
-                <div className="text-gray-400 text-xs">{d.date && new Date(d.date + 'T00:00:00').toLocaleDateString('ms-MY', { day:'numeric', month:'short', year:'numeric' })}{d.note ? ` · ${d.note}` : ''}</div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-green-700 text-lg">RM {Number(d.amount).toFixed(2)}</span>
-                {isAdmin && (
-                  <button onClick={() => del(d.id)} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setModal(false)}>
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-primary text-lg">Tambah Rekod Derma</h2>
-              <button onClick={() => setModal(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+        <div className="modal-overlay open" onClick={() => setModal(false)}>
+          <div className="modal-box" style={{ maxWidth: 400 }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#b34700', marginBottom: 18, paddingBottom: 10, borderBottom: '2px solid #fff3e8' }}>
+              Tambah Rekod Derma
             </div>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="label">Nama Penderma</label>
-                <input className="input" value={form.donor_name} onChange={e => setForm(f => ({ ...f, donor_name: e.target.value }))} placeholder="Tanpa Nama" />
+            {[
+              { k: 'donor_name', l: 'Nama Penderma', t: 'text', ph: 'Tanpa Nama' },
+              { k: 'amount',     l: 'Jumlah (RM) *', t: 'number', ph: '50.00' },
+              { k: 'date',       l: 'Tarikh',        t: 'date', ph: '' },
+              { k: 'note',       l: 'Nota',          t: 'text', ph: 'Derma untuk program...' },
+            ].map(({ k, l, t, ph }) => (
+              <div key={k} style={{ marginBottom: 12 }}>
+                <label className="label">{l}</label>
+                <input className="input" type={t} placeholder={ph} value={String((form as Record<string,string>)[k])} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))} />
               </div>
-              <div>
-                <label className="label">Jumlah (RM) *</label>
-                <input className="input" type="number" min="0" step="0.01" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="50.00" />
-              </div>
-              <div>
-                <label className="label">Tarikh</label>
-                <input className="input" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">Nota</label>
-                <input className="input" value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} placeholder="cth: Derma untuk program..." />
-              </div>
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button onClick={save} className="btn-primary flex-1" disabled={saving}>{saving ? 'Menyimpan...' : 'Simpan'}</button>
-              <button onClick={() => setModal(false)} className="btn-secondary">Batal</button>
+            ))}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 18 }}>
+              <button className="btn-cancel" onClick={() => setModal(false)}>Batal</button>
+              <button className="btn-save" onClick={save} disabled={saving}>{saving ? 'Menyimpan...' : 'Simpan'}</button>
             </div>
           </div>
         </div>
