@@ -55,9 +55,15 @@
   .badge { @apply inline-block px-2.5 py-0.5 rounded-xl text-xs font-semibold; }
   .badge-green  { background: #d4efdf; color: #1e8449; }
   .badge-orange { background: #fdebd0; color: #d35400; }
-  .badge-blue   { background: #d6eaf8; color: #e8671a; }
+  .badge-blue   { background: #d6eaf8; color: #1a6fa8; }
+  .badge-purple { background: #e8daef; color: #6c3483; }
   .badge-red    { background: #fadbd8; color: #c0392b; }
   .badge-grey   { background: #f2f3f4; color: #8a6040; }
+  .btn-primary  { @apply px-4 py-2 rounded-lg font-semibold text-sm text-white cursor-pointer border-none; background: #b34700; }
+  .btn-primary:hover { background: #8a3200; }
+  .btn-secondary { @apply px-4 py-2 rounded-lg font-semibold text-sm cursor-pointer border-none; background: #f2f3f4; color: #2c1a0e; }
+  .btn-danger   { @apply px-4 py-2 rounded-lg font-semibold text-sm text-white cursor-pointer border-none; background: #c0392b; }
+  .btn-danger:hover { background: #922b21; }
 
   /* ── Tables ── */
   .tbl-wrap { overflow-x: auto; }

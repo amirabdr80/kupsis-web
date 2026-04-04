@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, CalendarDays } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { FutureActivity } from '../types'
@@ -82,6 +83,15 @@ export default function FutureActivitiesPage() {
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <h2 className="font-bold text-gray-800">{a.name}</h2>
                     {a.status && <span className={badgeCls[a.status] || 'badge-gray'}>{a.status}</span>}
+                    {a.date && /^\d{4}-\d{2}-\d{2}$/.test(a.date) && (
+                      <Link
+                        to="/calendar"
+                        className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-800 font-medium"
+                        title="Lihat dalam Kalendar"
+                      >
+                        <CalendarDays size={13} /> Lihat Kalendar
+                      </Link>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-0.5 text-sm text-gray-600">
                     {a.date        && <span>📅 {a.date}</span>}
