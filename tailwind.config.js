@@ -4,9 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#1a5276',
-        secondary: '#2e86c1',
-        accent: '#f39c12',
+        primary:   '#b34700',
+        secondary: '#e8671a',
+        accent:    '#f5a623',
+        light:     '#fff8ec',
+      },
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(135deg, #8a3200 0%, #e8671a 60%, #f5a623 100%)',
       },
     },
   },

@@ -12,7 +12,11 @@ import AdminPage from './pages/AdminPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth()
-  if (loading) return <div className="flex items-center justify-center h-screen text-primary font-semibold">Memuatkan...</div>
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="text-primary font-semibold text-lg">Memuatkan...</div>
+    </div>
+  )
   return isAdmin ? <>{children}</> : <Navigate to="/login" replace />
 }
 
@@ -32,7 +36,7 @@ export default function App() {
           <Route path="/admin"      element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>
       </main>
-      <footer className="bg-primary text-white text-center text-xs py-3 mt-8 opacity-80">
+      <footer className="text-white text-center text-xs py-3 mt-8" style={{ background: 'linear-gradient(135deg, #8a3200, #e8671a)' }}>
         KUPSIS Road to SPM 2026 · F5 Salahuddin Al-Ayubi · KSIB
       </footer>
     </div>
