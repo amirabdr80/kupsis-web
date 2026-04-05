@@ -35,11 +35,11 @@ export default function HomePage() {
         supabase.from('past_activities').select('id', { count: 'exact', head: true }),
         supabase.from('future_activities').select('id', { count: 'exact', head: true }),
         supabase.from('photo_groups').select('id', { count: 'exact', head: true }),
-        supabase.from('donations').select('amount, type'),
+        supabase.from('donations').select('amount, type, category'),
       ])
       const rows = donations.data || []
       const total = rows
-        .filter((d: { amount: number; type?: string }) => d.type !== 'keluar')
+        .filter((d: { amount: number; type?: string; category?: string }) => d.type !== 'keluar' && d.category !== 'cikgu_alam')
         .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
       const belanja = rows
         .filter((d: { amount: number; type?: string }) => d.type === 'keluar')
@@ -143,31 +143,44 @@ export default function HomePage() {
         <div className="card">
           <div className="card-title"><span className="icon">💚</span> Dana SAA 2026</div>
 
-          {/* 3 stat boxes */}
+          {/* 3 stat boxes — all link to Dana SAA page */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
-            <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #16a34a' }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📥 Terkumpul</div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#15803d', marginTop: 3 }}>{fmtRM(stats.donations)}</div>
-              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Kutipan Bulanan + Infaq</div>
-            </div>
-            <div style={{ background: '#fef2f2', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #dc2626' }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📤 Perbelanjaan</div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#dc2626', marginTop: 3 }}>{fmtRM(stats.perbelanjaan)}</div>
-              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Hadiah, tuition, lain-lain</div>
-            </div>
-            <div style={{
-              background: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2',
-              borderRadius: 10, padding: '10px 12px',
-              borderLeft: `3px solid ${danaBaki >= 0 ? '#16a34a' : '#dc2626'}`,
-            }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                {danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit'}
+            <Link to="/donations" style={{ textDecoration: 'none' }}>
+              <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #16a34a', cursor: 'pointer', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#dcfce7')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#f0fdf4')}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📥 Terkumpul</div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#15803d', marginTop: 3 }}>{fmtRM(stats.donations)}</div>
+                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Kutipan Bulanan + Infaq</div>
               </div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: danaBaki >= 0 ? '#15803d' : '#dc2626', marginTop: 3 }}>
-                {fmtRM(Math.abs(danaBaki))}
+            </Link>
+            <Link to="/donations" style={{ textDecoration: 'none' }}>
+              <div style={{ background: '#fef2f2', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #dc2626', cursor: 'pointer', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#fee2e2')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#fef2f2')}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📤 Perbelanjaan</div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#dc2626', marginTop: 3 }}>{fmtRM(stats.perbelanjaan)}</div>
+                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Hadiah, tuition, lain-lain</div>
               </div>
-              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Terkumpul − Perbelanjaan</div>
-            </div>
+            </Link>
+            <Link to="/donations" style={{ textDecoration: 'none' }}>
+              <div style={{
+                background: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2',
+                borderRadius: 10, padding: '10px 12px',
+                borderLeft: `3px solid ${danaBaki >= 0 ? '#16a34a' : '#dc2626'}`,
+                cursor: 'pointer', transition: 'background 0.15s',
+              }}
+                onMouseEnter={e => (e.currentTarget.style.background = danaBaki >= 0 ? '#dcfce7' : '#fee2e2')}
+                onMouseLeave={e => (e.currentTarget.style.background = danaBaki >= 0 ? '#f0fdf4' : '#fef2f2')}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                  {danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: danaBaki >= 0 ? '#15803d' : '#dc2626', marginTop: 3 }}>
+                  {fmtRM(Math.abs(danaBaki))}
+                </div>
+                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Terkumpul − Perbelanjaan</div>
+              </div>
+            </Link>
           </div>
 
           {/* Progress toward target */}
