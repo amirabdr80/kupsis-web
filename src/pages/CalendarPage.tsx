@@ -56,7 +56,7 @@ function FullMonthGrid({ year, month, overrides, actByDate, dayDetail, onDayClic
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
         {DAYS_SHORT.map((d, i) => (
-          <div key={d} className={`text-center text-xs font-bold py-1 ${i === 4 || i === 5 ? 'text-orange-500' : 'text-gray-500'}`}>
+          <div key={d} className={`text-center text-xs font-bold py-1 ${i === 5 || i === 6 ? 'text-orange-500' : 'text-gray-500'}`}>
             {d}
           </div>
         ))}
@@ -71,7 +71,7 @@ function FullMonthGrid({ year, month, overrides, actByDate, dayDetail, onDayClic
         {Array.from({ length: daysInMonth }, (_, i) => {
           const d       = i + 1
           const dow     = (firstDow + i) % 7
-          const isWknd  = dow === 4 || dow === 5
+          const isWknd  = dow === 5 || dow === 6
           const iso     = isoDate(year, month, d)
           const ov      = overrides[iso]
           const isPB    = ov ? ov.pb   : has(_PB,   month, d)
