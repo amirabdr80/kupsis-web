@@ -99,4 +99,55 @@
   }
   .input:focus { outline: none; border-color: #e8671a; box-shadow: 0 0 0 2px rgba(232,103,26,0.15); }
   .label { @apply block text-xs font-semibold mb-1; color: #2c1a0e; }
+
+  /* ── Motivational banner ── */
+  .moti-banner {
+    background: linear-gradient(135deg, #fff8f0, #fff3e8);
+    border-left: 4px solid #e8671a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-style: italic;
+    color: #6b4c2a;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .moti-banner cite { display: block; margin-top: 6px; font-size: 0.78rem; color: #9a6040; font-style: normal; }
+}
+
+/* ── Mobile responsive overrides ── */
+@media (max-width: 640px) {
+  .card {
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  .stat-box {
+    padding: 12px 10px;
+  }
+  .stat-num {
+    font-size: 1.4rem;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+  }
+  .section-hero {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .section-hero > div:first-child {
+    font-size: 2rem !important;
+  }
+  .modal-box {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+  .tbl th, .tbl td {
+    padding: 7px 8px;
+    font-size: 0.78rem;
+  }
 }

@@ -69,10 +69,10 @@ export default function HomePage() {
   ]
 
   return (
-    <div style={{ maxWidth: 1300, margin: '0 auto', padding: '28px 24px' }}>
+    <div style={{ maxWidth: 1300, margin: '0 auto', padding: 'clamp(14px, 4vw, 28px) clamp(12px, 4vw, 24px)' }}>
 
       {/* School hero photo */}
-      <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 20, position: 'relative', height: 220, boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+      <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16, position: 'relative', height: 'clamp(140px, 40vw, 220px)', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
         <img
           src="/sekolah-kupsis.jpg"
           alt="SM Sains Kubang Pasu"
@@ -81,16 +81,16 @@ export default function HomePage() {
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(to right, rgba(140,50,0,0.75) 0%, rgba(0,0,0,0.1) 60%)',
-          display: 'flex', alignItems: 'center', padding: '0 32px'
+          display: 'flex', alignItems: 'center', padding: '0 clamp(16px, 5vw, 32px)'
         }}>
           <div style={{ color: 'white' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+            <div style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)', fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               SM Sains Kubang Pasu
             </div>
-            <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: 4, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+            <div style={{ fontSize: 'clamp(0.72rem, 3vw, 0.9rem)', opacity: 0.9, marginTop: 4, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
               Batch Salahuddin Al-Ayubi · SPM 2026
             </div>
-            <div style={{ fontSize: '0.75rem', opacity: 0.75, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+            <div style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', opacity: 0.75, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
               Batu 19, Jalan Kodiang, Jitra, Kedah
             </div>
           </div>
@@ -104,38 +104,42 @@ export default function HomePage() {
       </div>
 
       {/* Countdowns side by side */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 16 }}>
 
         {/* SPM Trial Countdown */}
         <div className="card" style={{ borderTop: '4px solid #e8671a' }}>
-          <div className="card-title"><span className="icon">📝</span> Kiraan Masa ke Peperiksaan Percubaan SPM — Julai 2026</div>
+          <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)' }}>
+            <span>📝</span> Percubaan SPM — Julai 2026
+          </div>
           {trialCountdown.done ? (
-            <div style={{ textAlign: 'center', color: '#1e8449', fontWeight: 700, fontSize: '1.1rem', padding: '12px 0' }}>✅ Peperiksaan Percubaan Telah Berlangsung</div>
+            <div style={{ textAlign: 'center', color: '#1e8449', fontWeight: 700, fontSize: '1rem', padding: '8px 0' }}>✅ Peperiksaan Percubaan Telah Berlangsung</div>
           ) : (
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
               {trialBoxes.map(b => (
-                <div key={b.lbl} style={{ background: '#e8671a', color: 'white', borderRadius: 12, padding: '14px 18px', textAlign: 'center', minWidth: 70 }}>
-                  <div style={{ fontSize: '1.9rem', fontWeight: 800 }}>{String(b.num).padStart(2, '0')}</div>
-                  <div style={{ fontSize: '0.68rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1 }}>{b.lbl}</div>
+                <div key={b.lbl} style={{ background: '#e8671a', color: 'white', borderRadius: 10, padding: 'clamp(8px,2vw,14px) clamp(10px,3vw,18px)', textAlign: 'center', flex: 1 }}>
+                  <div style={{ fontSize: 'clamp(1.2rem, 5vw, 1.9rem)', fontWeight: 800, lineHeight: 1 }}>{String(b.num).padStart(2, '0')}</div>
+                  <div style={{ fontSize: 'clamp(0.58rem, 2vw, 0.68rem)', opacity: 0.85, textTransform: 'uppercase', marginTop: 3 }}>{b.lbl}</div>
                 </div>
               ))}
             </div>
           )}
-          <div style={{ textAlign: 'center', fontSize: '0.78rem', color: '#8a6040', marginTop: 10 }}>Angkaan Percubaan SPM · Julai 2026</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>Angkaan Percubaan SPM · Julai 2026</div>
         </div>
 
         {/* SPM Countdown */}
         <div className="card" style={{ borderTop: '4px solid #b34700' }}>
-          <div className="card-title"><span className="icon">⏳</span> Kiraan Masa ke SPM 2026 — 9 November 2026</div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)' }}>
+            <span>⏳</span> SPM 2026 — 9 November 2026
+          </div>
+          <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
             {countdownBoxes.map(b => (
-              <div key={b.lbl} style={{ background: '#b34700', color: 'white', borderRadius: 12, padding: '14px 18px', textAlign: 'center', minWidth: 70 }}>
-                <div style={{ fontSize: '1.9rem', fontWeight: 800 }}>{String(b.num).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.68rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1 }}>{b.lbl}</div>
+              <div key={b.lbl} style={{ background: '#b34700', color: 'white', borderRadius: 10, padding: 'clamp(8px,2vw,14px) clamp(10px,3vw,18px)', textAlign: 'center', flex: 1 }}>
+                <div style={{ fontSize: 'clamp(1.2rem, 5vw, 1.9rem)', fontWeight: 800, lineHeight: 1 }}>{String(b.num).padStart(2, '0')}</div>
+                <div style={{ fontSize: 'clamp(0.58rem, 2vw, 0.68rem)', opacity: 0.85, textTransform: 'uppercase', marginTop: 3 }}>{b.lbl}</div>
               </div>
             ))}
           </div>
-          <div style={{ textAlign: 'center', fontSize: '0.78rem', color: '#8a6040', marginTop: 10 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS</div>
         </div>
       </div>
 
@@ -166,43 +170,33 @@ export default function HomePage() {
           <div className="card-title"><span className="icon">💚</span> Dana SAA 2026</div>
 
           {/* 3 stat boxes — all link to Dana SAA page */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
-            <Link to="/donations" style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #16a34a', cursor: 'pointer', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#dcfce7')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#f0fdf4')}>
-                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📥 Terkumpul</div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#15803d', marginTop: 3 }}>{fmtRM(stats.donations)}</div>
-                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Kutipan Bulanan + Infaq</div>
-              </div>
-            </Link>
-            <Link to="/donations" style={{ textDecoration: 'none' }}>
-              <div style={{ background: '#fef2f2', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #dc2626', cursor: 'pointer', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#fee2e2')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#fef2f2')}>
-                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📤 Perbelanjaan</div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#dc2626', marginTop: 3 }}>{fmtRM(stats.perbelanjaan)}</div>
-                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Hadiah, tuition, lain-lain</div>
-              </div>
-            </Link>
-            <Link to="/donations" style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2',
-                borderRadius: 10, padding: '10px 12px',
-                borderLeft: `3px solid ${danaBaki >= 0 ? '#16a34a' : '#dc2626'}`,
-                cursor: 'pointer', transition: 'background 0.15s',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.background = danaBaki >= 0 ? '#dcfce7' : '#fee2e2')}
-                onMouseLeave={e => (e.currentTarget.style.background = danaBaki >= 0 ? '#f0fdf4' : '#fef2f2')}>
-                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                  {danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit'}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 14 }}>
+            {[
+              { to: '/donations', bg: '#f0fdf4', bgHover: '#dcfce7', border: '#16a34a', label: '📥 Terkumpul', amount: fmtRM(stats.donations), sub: 'Bulanan + Infaq', color: '#15803d' },
+              { to: '/donations', bg: '#fef2f2', bgHover: '#fee2e2', border: '#dc2626', label: '📤 Belanja',    amount: fmtRM(stats.perbelanjaan), sub: 'Perbelanjaan', color: '#dc2626' },
+              { to: '/donations', bg: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2', bgHover: danaBaki >= 0 ? '#dcfce7' : '#fee2e2', border: danaBaki >= 0 ? '#16a34a' : '#dc2626', label: danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit', amount: fmtRM(Math.abs(danaBaki)), sub: 'Terkumpul − Belanja', color: danaBaki >= 0 ? '#15803d' : '#dc2626' },
+            ].map((item, idx) => (
+              <Link key={idx} to={item.to} style={{ textDecoration: 'none', minWidth: 0 }}>
+                <div style={{
+                  background: item.bg, borderRadius: 10,
+                  padding: 'clamp(7px, 2vw, 10px) clamp(6px, 2vw, 10px)',
+                  borderLeft: `3px solid ${item.border}`, cursor: 'pointer',
+                  transition: 'background 0.15s', height: '100%', boxSizing: 'border-box',
+                }}
+                  onMouseEnter={e => (e.currentTarget.style.background = item.bgHover)}
+                  onMouseLeave={e => (e.currentTarget.style.background = item.bg)}>
+                  <div style={{ fontSize: 'clamp(0.55rem, 2vw, 0.65rem)', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontSize: 'clamp(0.72rem, 3.2vw, 1rem)', fontWeight: 800, color: item.color, marginTop: 2, wordBreak: 'break-all', lineHeight: 1.2 }}>
+                    {item.amount}
+                  </div>
+                  <div style={{ fontSize: 'clamp(0.55rem, 1.8vw, 0.65rem)', color: '#9ca3af', marginTop: 2, lineHeight: 1.3 }}>
+                    {item.sub}
+                  </div>
                 </div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: danaBaki >= 0 ? '#15803d' : '#dc2626', marginTop: 3 }}>
-                  {fmtRM(Math.abs(danaBaki))}
-                </div>
-                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Terkumpul − Perbelanjaan</div>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
 
           {/* Progress toward target */}
@@ -239,10 +233,10 @@ export default function HomePage() {
       </div>
 
       {/* Info + Batch Photo */}
-      <div className="card" style={{ marginTop: 20 }}>
+      <div className="card" style={{ marginTop: 16 }}>
         <div className="card-title"><span className="icon">ℹ️</span> Maklumat Batch</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {[
               ['Nama Batch', 'Salahuddin Al-Ayubi'],
               ['Tahun Peperiksaan', 'SPM 2026'],
@@ -251,9 +245,9 @@ export default function HomePage() {
               ['Badan Ibu Bapa', 'KSIB (Kelab Sokongan Ibu Bapa)'],
               ['Tarikh SPM', '9 November 2026'],
             ].map(([label, val]) => (
-              <div key={label} className="info-row" style={{ display: 'flex', gap: 8, fontSize: '0.9rem' }}>
-                <span style={{ fontWeight: 600, color: '#b34700', minWidth: 160, flexShrink: 0 }}>{label}:</span>
-                <span style={{ color: '#2c1a0e' }}>{val}</span>
+              <div key={label} style={{ display: 'flex', gap: 6, fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', flexWrap: 'wrap' }}>
+                <span style={{ fontWeight: 600, color: '#b34700', minWidth: 'clamp(110px, 30vw, 160px)', flexShrink: 0 }}>{label}:</span>
+                <span style={{ color: '#2c1a0e', flex: 1, minWidth: 0 }}>{val}</span>
               </div>
             ))}
           </div>
