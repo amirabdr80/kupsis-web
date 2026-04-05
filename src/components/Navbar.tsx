@@ -26,7 +26,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-6 py-3 border-b border-white/15">
         <div className="flex items-center gap-4">
           <div style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>
-            <img src="/logo-kupsis.jpg" alt="Logo KUPSIS" width="60" height="73" style={{ objectFit: 'contain' }} />
+            <img src="/logo-kupsis.png" alt="Logo KUPSIS" width="75" height="75" style={{ objectFit: 'contain' }} />
           </div>
           <div className="text-white">
             <div className="font-bold text-base leading-tight">SM Sains Kubang Pasu — Batch Salahuddin Al-Ayubi</div>
