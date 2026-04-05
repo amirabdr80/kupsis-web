@@ -148,27 +148,35 @@ export default function DonationsPage() {
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => { setMainSection('dana_saa'); setDanaSub('semua_dana') }}
-          className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all border-2 ${
-            mainSection === 'dana_saa'
-              ? 'bg-green-600 text-white border-green-600 shadow-md'
-              : 'bg-white text-green-700 border-green-200 hover:border-green-400'
-          }`}
+          style={{
+            flex: 1, padding: '12px 16px', borderRadius: 12, fontWeight: 700,
+            fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.15s',
+            border: '2px solid',
+            background: mainSection === 'dana_saa' ? '#16a34a' : '#ffffff',
+            borderColor: mainSection === 'dana_saa' ? '#16a34a' : '#bbf7d0',
+            color: mainSection === 'dana_saa' ? '#ffffff' : '#15803d',
+            boxShadow: mainSection === 'dana_saa' ? '0 2px 8px rgba(22,163,74,0.35)' : 'none',
+          }}
         >
           💚 Dana SAA
-          <div className={`text-xs font-normal mt-0.5 ${mainSection === 'dana_saa' ? 'text-green-100' : 'text-gray-400'}`}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 400, marginTop: 2, opacity: 0.8 }}>
             Kutipan Bulanan · Dana Infaq · Perbelanjaan
           </div>
         </button>
         <button
           onClick={() => setMainSection('cikgu_alam')}
-          className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all border-2 ${
-            mainSection === 'cikgu_alam'
-              ? 'bg-purple-600 text-white border-purple-600 shadow-md'
-              : 'bg-white text-purple-700 border-purple-200 hover:border-purple-400'
-          }`}
+          style={{
+            flex: 1, padding: '12px 16px', borderRadius: 12, fontWeight: 700,
+            fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.15s',
+            border: '2px solid',
+            background: mainSection === 'cikgu_alam' ? '#7c3aed' : '#ffffff',
+            borderColor: mainSection === 'cikgu_alam' ? '#7c3aed' : '#ede9fe',
+            color: mainSection === 'cikgu_alam' ? '#ffffff' : '#6d28d9',
+            boxShadow: mainSection === 'cikgu_alam' ? '0 2px 8px rgba(124,58,237,0.35)' : 'none',
+          }}
         >
           📚 Tuition Cikgu Alam
-          <div className={`text-xs font-normal mt-0.5 ${mainSection === 'cikgu_alam' ? 'text-purple-100' : 'text-gray-400'}`}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 400, marginTop: 2, opacity: 0.8 }}>
             Bayaran tuisyen Math & Add Math
           </div>
         </button>
