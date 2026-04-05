@@ -22,7 +22,7 @@ function getTrialCountdown() { return calcCountdown(TRIAL_DATE) }
 export default function HomePage() {
   const [countdown, setCountdown]      = useState(getCountdown())
   const [trialCountdown, setTrial]     = useState(getTrialCountdown())
-  const [stats, setStats] = useState({ past: 0, future: 0, photos: 0, donations: 0 })
+  const [stats, setStats] = useState({ past: 0, future: 0, photos: 0, donations: 0, perbelanjaan: 0 })
 
   useEffect(() => {
     const t = setInterval(() => { setCountdown(getCountdown()); setTrial(getTrialCountdown()) }, 1000)
@@ -37,16 +37,22 @@ export default function HomePage() {
         supabase.from('photo_groups').select('id', { count: 'exact', head: true }),
         supabase.from('donations').select('amount, type'),
       ])
-      const total = (donations.data || [])
+      const rows = donations.data || []
+      const total = rows
         .filter((d: { amount: number; type?: string }) => d.type !== 'keluar')
         .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
-      setStats({ past: past.count ?? 0, future: future.count ?? 0, photos: photos.count ?? 0, donations: total })
+      const belanja = rows
+        .filter((d: { amount: number; type?: string }) => d.type === 'keluar')
+        .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
+      setStats({ past: past.count ?? 0, future: future.count ?? 0, photos: photos.count ?? 0, donations: total, perbelanjaan: belanja })
     }
     load()
   }, [])
 
   const TARGET_DONATIONS = 100000
+  const danaBaki    = stats.donations - stats.perbelanjaan
   const donationPct = Math.min(100, (stats.donations / TARGET_DONATIONS) * 100)
+  const fmtRM = (n: number) => 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const countdownBoxes = [
     { num: countdown.days,    lbl: 'Hari' },
@@ -136,15 +142,41 @@ export default function HomePage() {
         {/* Donation progress */}
         <div className="card">
           <div className="card-title"><span className="icon">💚</span> Dana SAA 2026</div>
-          <div style={{ fontSize: '0.75rem', color: '#8a6040', marginBottom: 6 }}>
-            Kutipan Bulanan · Dana Infaq SAA · (tidak termasuk perbelanjaan)
+
+          {/* 3 stat boxes */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
+            <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #16a34a' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📥 Terkumpul</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#15803d', marginTop: 3 }}>{fmtRM(stats.donations)}</div>
+              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Kutipan Bulanan + Infaq</div>
+            </div>
+            <div style={{ background: '#fef2f2', borderRadius: 10, padding: '10px 12px', borderLeft: '3px solid #dc2626' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>📤 Perbelanjaan</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#dc2626', marginTop: 3 }}>{fmtRM(stats.perbelanjaan)}</div>
+              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Hadiah, tuition, lain-lain</div>
+            </div>
+            <div style={{
+              background: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2',
+              borderRadius: 10, padding: '10px 12px',
+              borderLeft: `3px solid ${danaBaki >= 0 ? '#16a34a' : '#dc2626'}`,
+            }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                {danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit'}
+              </div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: danaBaki >= 0 ? '#15803d' : '#dc2626', marginTop: 3 }}>
+                {fmtRM(Math.abs(danaBaki))}
+              </div>
+              <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: 1 }}>Terkumpul − Perbelanjaan</div>
+            </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: 4, color: '#2c1a0e' }}>
-            <span>Terkumpul: <strong>RM {stats.donations.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
-            <span>Sasaran: <strong>RM {TARGET_DONATIONS.toLocaleString()}</strong></span>
+
+          {/* Progress toward target */}
+          <div style={{ fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', marginBottom: 5, color: '#2c1a0e' }}>
+            <span style={{ color: '#8a6040' }}>Sasaran kutipan keseluruhan</span>
+            <span><strong>{donationPct.toFixed(1)}%</strong> daripada <strong>RM 100,000</strong></span>
           </div>
           <div className="progress-bar"><div className="progress-fill green" style={{ width: `${donationPct}%` }} /></div>
-          <div style={{ textAlign: 'right', fontSize: '0.78rem', color: '#8a6040', marginTop: 4 }}>{donationPct.toFixed(1)}% daripada sasaran RM100,000</div>
+
           <Link to="/donations" className="btn-add mt-4 text-xs" style={{ display: 'inline-flex' }}>Lihat Dana SAA →</Link>
         </div>
 
