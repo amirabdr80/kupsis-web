@@ -110,18 +110,22 @@ export default function DonationsPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary">💚 Dana & Kutipan KSIB SAA</h1>
-        <p className="text-gray-500 text-sm mt-1">Pengurusan kewangan Batch Salahuddin Al-Ayubi · SPM 2026</p>
+      <div className="mb-5">
+        <h1 style={{ fontSize: 'clamp(1.1rem, 5vw, 1.5rem)', fontWeight: 800, color: '#9a3412' }}>
+          💚 Dana & Kutipan KSIB SAA
+        </h1>
+        <p className="text-gray-500 mt-1" style={{ fontSize: 'clamp(0.7rem, 3vw, 0.875rem)' }}>
+          Pengurusan kewangan Batch Salahuddin Al-Ayubi · SPM 2026
+        </p>
       </div>
 
       {/* ── MAIN TOGGLE ─────────────────────────────────────────── */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-5">
         <button
           onClick={() => { setMainSection('dana_saa'); setDanaSub('semua_dana'); setKelasTab('semua_kelas') }}
           style={{
-            flex: 1, padding: '12px 16px', borderRadius: 12, fontWeight: 700,
-            fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.15s', border: '2px solid',
+            flex: 1, padding: '10px 12px', borderRadius: 12, fontWeight: 700,
+            fontSize: 'clamp(0.78rem, 3.5vw, 0.9rem)', cursor: 'pointer', transition: 'all 0.15s', border: '2px solid',
             background:   mainSection === 'dana_saa' ? '#16a34a' : '#ffffff',
             borderColor:  mainSection === 'dana_saa' ? '#16a34a' : '#bbf7d0',
             color:        mainSection === 'dana_saa' ? '#ffffff' : '#15803d',
@@ -129,15 +133,15 @@ export default function DonationsPage() {
           }}
         >
           💚 Dana SAA
-          <div style={{ fontSize: '0.72rem', fontWeight: 400, marginTop: 2, opacity: 0.85 }}>
-            Kutipan Bulanan · Dana Infaq · Perbelanjaan
+          <div style={{ fontSize: 'clamp(0.62rem, 2.5vw, 0.72rem)', fontWeight: 400, marginTop: 2, opacity: 0.85 }}>
+            Kutipan Bulanan · Infaq · Perbelanjaan
           </div>
         </button>
         <button
           onClick={() => setMainSection('cikgu_alam')}
           style={{
-            flex: 1, padding: '12px 16px', borderRadius: 12, fontWeight: 700,
-            fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.15s', border: '2px solid',
+            flex: 1, padding: '10px 12px', borderRadius: 12, fontWeight: 700,
+            fontSize: 'clamp(0.78rem, 3.5vw, 0.9rem)', cursor: 'pointer', transition: 'all 0.15s', border: '2px solid',
             background:   mainSection === 'cikgu_alam' ? '#7c3aed' : '#ffffff',
             borderColor:  mainSection === 'cikgu_alam' ? '#7c3aed' : '#ede9fe',
             color:        mainSection === 'cikgu_alam' ? '#ffffff' : '#6d28d9',
@@ -145,8 +149,8 @@ export default function DonationsPage() {
           }}
         >
           📚 Tuition Cikgu Alam
-          <div style={{ fontSize: '0.72rem', fontWeight: 400, marginTop: 2, opacity: 0.85 }}>
-            Bayaran tuisyen Math & Add Math
+          <div style={{ fontSize: 'clamp(0.62rem, 2.5vw, 0.72rem)', fontWeight: 400, marginTop: 2, opacity: 0.85 }}>
+            Bayaran tuisyen Math &amp; Add Math
           </div>
         </button>
       </div>
@@ -155,71 +159,78 @@ export default function DonationsPage() {
       {mainSection === 'dana_saa' && (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="card p-4 border-l-4 border-green-400">
-              <div className="text-xs font-bold text-gray-500 uppercase mb-1">💰 Kutipan Bulanan</div>
-              <div className="text-xl font-extrabold text-green-700">{fmtRM(sum(kutipanRecs))}</div>
-              <div className="text-xs text-gray-400 mt-1">{kutipanRecs.length} transaksi</div>
-            </div>
-            <div className="card p-4 border-l-4 border-blue-400">
-              <div className="text-xs font-bold text-gray-500 uppercase mb-1">🌟 Dana Infaq SAA</div>
-              <div className="text-xl font-extrabold text-blue-700">{fmtRM(sum(infaqRecs))}</div>
-              <div className="text-xs text-gray-400 mt-1">{infaqRecs.length} transaksi</div>
-            </div>
-            <div className="card p-4 border-l-4 border-red-400">
-              <div className="text-xs font-bold text-gray-500 uppercase mb-1">📤 Perbelanjaan</div>
-              <div className="text-xl font-extrabold text-red-700">{fmtRM(sum(belanjaRecs))}</div>
-              <div className="text-xs text-gray-400 mt-1">{belanjaRecs.length} transaksi</div>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 14 }}>
+            {[
+              { label: '💰 Kutipan Bulanan', amount: sum(kutipanRecs), count: kutipanRecs.length, color: '#15803d', border: '#4ade80' },
+              { label: '🌟 Dana Infaq',      amount: sum(infaqRecs),   count: infaqRecs.length,   color: '#1d4ed8', border: '#60a5fa' },
+              { label: '📤 Perbelanjaan',    amount: sum(belanjaRecs), count: belanjaRecs.length, color: '#dc2626', border: '#f87171' },
+            ].map(c => (
+              <div key={c.label} className="card" style={{ borderLeft: `4px solid ${c.border}`, padding: '10px 10px' }}>
+                <div style={{ fontSize: 'clamp(0.58rem, 2.2vw, 0.7rem)', fontWeight: 700, color: '#6b7280', marginBottom: 4, lineHeight: 1.2 }}>
+                  {c.label}
+                </div>
+                <div style={{ fontSize: 'clamp(0.78rem, 3.5vw, 1.1rem)', fontWeight: 800, color: c.color, lineHeight: 1.2, wordBreak: 'break-all' }}>
+                  {fmtRM(c.amount)}
+                </div>
+                <div style={{ fontSize: 'clamp(0.58rem, 2vw, 0.7rem)', color: '#9ca3af', marginTop: 3 }}>
+                  {c.count} transaksi
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Baki banner */}
           <div style={{
             background: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2',
             border: `1px solid ${danaBaki >= 0 ? '#bbf7d0' : '#fecaca'}`,
-            borderRadius: 12, padding: '14px 18px', marginBottom: 20,
-            display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+            borderRadius: 12, padding: '12px 14px', marginBottom: 16,
           }}>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#374151' }}>Baki Dana SAA</div>
-              <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: 2 }}>
-                Masuk: {fmtRM(danaMasuk)} &nbsp;·&nbsp; Keluar: {fmtRM(danaKeluar)}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 'clamp(0.8rem, 3.5vw, 0.9rem)', color: '#374151' }}>Baki Dana SAA</div>
+                <div style={{ fontSize: 'clamp(0.62rem, 2.5vw, 0.75rem)', color: '#9ca3af', marginTop: 2 }}>
+                  Masuk: {fmtRM(danaMasuk)} · Keluar: {fmtRM(danaKeluar)}
+                </div>
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 'clamp(1.2rem, 5vw, 1.8rem)', color: danaBaki >= 0 ? '#15803d' : '#dc2626', lineHeight: 1 }}>
+                {fmtRM(Math.abs(danaBaki))}
+                <span style={{ fontWeight: 600, fontSize: 'clamp(0.7rem, 2.5vw, 0.85rem)', marginLeft: 5 }}>
+                  {danaBaki >= 0 ? 'Baki' : 'Defisit'}
+                </span>
               </div>
             </div>
-            <div style={{ fontWeight: 800, fontSize: '1.8rem', color: danaBaki >= 0 ? '#15803d' : '#dc2626' }}>
-              {fmtRM(Math.abs(danaBaki))}
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', marginLeft: 6 }}>{danaBaki >= 0 ? 'Baki' : 'Defisit'}</span>
-            </div>
             {isAdmin && (
-              <button onClick={() => { setModal(true); setForm(f => ({ ...f, type: 'masuk', category: 'kutipan_bulanan' })) }}
-                className="btn-add flex items-center gap-1 text-sm">
-                <Plus size={15} /> Tambah Rekod
-              </button>
+              <div style={{ marginTop: 10 }}>
+                <button onClick={() => { setModal(true); setForm(f => ({ ...f, type: 'masuk', category: 'kutipan_bulanan' })) }}
+                  className="btn-add flex items-center gap-1 text-sm">
+                  <Plus size={15} /> Tambah Rekod
+                </button>
+              </div>
             )}
           </div>
 
           {/* Sub-tabs: Semua | Kutipan Bulanan | Infaq | Perbelanjaan */}
-          <div className="flex gap-1 flex-wrap mb-3 bg-gray-100 p-1 rounded-lg">
+          <div style={{ background: '#f3f4f6', padding: 4, borderRadius: 10, marginBottom: 12, display: 'flex', gap: 4, overflowX: 'auto', scrollbarWidth: 'none' }}>
             {([
-              ['semua_dana',      '📋 Semua',         danaSAAAll.length],
-              ['kutipan_bulanan', '💰 Kutipan Bulanan', kutipanRecs.length],
-              ['infaq',           '🌟 Dana Infaq',     infaqRecs.length],
-              ['perbelanjaan',    '📤 Perbelanjaan',   belanjaRecs.length],
+              ['semua_dana',      '📋 Semua',       danaSAAAll.length],
+              ['kutipan_bulanan', '💰 Kutipan',      kutipanRecs.length],
+              ['infaq',           '🌟 Infaq',        infaqRecs.length],
+              ['perbelanjaan',    '📤 Belanja',      belanjaRecs.length],
             ] as [DanaSAASub, string, number][]).map(([key, label, count]) => (
               <button key={key}
                 onClick={() => { setDanaSub(key); setKelasTab('semua_kelas') }}
                 style={{
-                  fontSize: '0.75rem', fontWeight: danaSub === key ? 700 : 500,
-                  padding: '6px 12px', borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s',
+                  fontSize: 'clamp(0.68rem, 2.8vw, 0.78rem)', fontWeight: danaSub === key ? 700 : 500,
+                  padding: '6px 10px', borderRadius: 7, cursor: 'pointer', transition: 'all 0.15s',
                   background: danaSub === key ? '#ffffff' : 'transparent',
                   color: danaSub === key ? '#b34700' : '#6b7280',
                   boxShadow: danaSub === key ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
-                  border: 'none',
+                  border: 'none', whiteSpace: 'nowrap', flexShrink: 0,
                 }}
               >
                 {label}
                 <span style={{
-                  marginLeft: 4, fontSize: '0.65rem', borderRadius: 999, padding: '1px 6px',
+                  marginLeft: 4, fontSize: '0.62rem', borderRadius: 999, padding: '1px 5px',
                   background: danaSub === key ? '#b34700' : '#e5e7eb',
                   color: danaSub === key ? '#fff' : '#6b7280',
                 }}>
@@ -232,8 +243,8 @@ export default function DonationsPage() {
           {/* ── CLASS TABS (only when Kutipan Bulanan is active) ── */}
           {danaSub === 'kutipan_bulanan' && (
             <>
-              {/* Per-class summary strip */}
-              <div className="grid grid-cols-5 gap-2 mb-3">
+              {/* Per-class summary strip — horizontally scrollable on mobile */}
+              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4, marginBottom: 10 }}>
                 {KELAS.map(k => {
                   const recs = kelasByName(k)
                   const total = sum(recs)
@@ -241,19 +252,20 @@ export default function DonationsPage() {
                   return (
                     <button key={k} onClick={() => setKelasTab(isActive ? 'semua_kelas' : k)}
                       style={{
-                        borderRadius: 10, padding: '10px 8px', cursor: 'pointer',
+                        borderRadius: 10, padding: '10px 12px', cursor: 'pointer',
                         border: '2px solid', transition: 'all 0.15s', textAlign: 'center',
                         background: isActive ? '#16a34a' : '#f0fdf4',
                         borderColor: isActive ? '#16a34a' : '#bbf7d0',
                         color: isActive ? '#ffffff' : '#15803d',
                         boxShadow: isActive ? '0 2px 6px rgba(22,163,74,0.3)' : 'none',
+                        minWidth: 100, flexShrink: 0,
                       }}
                     >
                       <div style={{ fontWeight: 700, fontSize: '0.8rem' }}>{k}</div>
-                      <div style={{ fontWeight: 800, fontSize: '0.9rem', marginTop: 2, opacity: 0.9 }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.85rem', marginTop: 3, opacity: 0.9 }}>
                         {fmtRM(total)}
                       </div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.7, marginTop: 1 }}>
+                      <div style={{ fontSize: '0.63rem', opacity: 0.7, marginTop: 2 }}>
                         {recs.length} rekod
                       </div>
                     </button>
@@ -261,8 +273,8 @@ export default function DonationsPage() {
                 })}
               </div>
 
-              {/* Class tab row */}
-              <div className="flex gap-1 flex-wrap mb-3 bg-green-50 p-1 rounded-lg border border-green-100">
+              {/* Class tab row — scrollable */}
+              <div style={{ background: '#f0fdf4', padding: 4, borderRadius: 10, border: '1px solid #bbf7d0', display: 'flex', gap: 4, overflowX: 'auto', scrollbarWidth: 'none', marginBottom: 10 }}>
                 <button
                   onClick={() => setKelasTab('semua_kelas')}
                   style={{
@@ -270,9 +282,10 @@ export default function DonationsPage() {
                     padding: '5px 10px', borderRadius: 6, cursor: 'pointer', border: 'none',
                     background: kelasTab === 'semua_kelas' ? '#16a34a' : 'transparent',
                     color: kelasTab === 'semua_kelas' ? '#fff' : '#15803d',
+                    whiteSpace: 'nowrap', flexShrink: 0,
                   }}
                 >
-                  📋 Semua Kelas
+                  📋 Semua
                 </button>
                 {KELAS.map(k => (
                   <button key={k}
@@ -282,6 +295,7 @@ export default function DonationsPage() {
                       padding: '5px 10px', borderRadius: 6, cursor: 'pointer', border: 'none',
                       background: kelasTab === k ? '#16a34a' : 'transparent',
                       color: kelasTab === k ? '#fff' : '#15803d',
+                      whiteSpace: 'nowrap', flexShrink: 0,
                     }}
                   >
                     {k}
@@ -344,24 +358,24 @@ export default function DonationsPage() {
         {displayed.length === 0 ? (
           <p className="text-center text-gray-400 py-10 italic">Tiada rekod.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', fontSize: 'clamp(0.7rem, 2.5vw, 0.875rem)', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="bg-light border-b border-border">
-                  <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">#</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">
-                    {danaSub === 'kutipan_bulanan' ? 'Kelas / Nama' : 'Nama / Kelas'}
+                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>#</th>
+                  <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>
+                    {danaSub === 'kutipan_bulanan' ? 'Kelas / Nama' : 'Nama'}
                   </th>
                   {showCatCol && (
-                    <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">Kategori</th>
+                    <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>Kategori</th>
                   )}
                   {danaSub === 'kutipan_bulanan' && kelasTab === 'semua_kelas' && (
-                    <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">Kelas</th>
+                    <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>Kelas</th>
                   )}
-                  <th className="text-right py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">Jumlah</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">Tarikh</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-bold text-gray-500 uppercase">Nota</th>
-                  {isAdmin && <th className="py-2.5 px-3"></th>}
+                  <th style={{ textAlign: 'right', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>Jumlah</th>
+                  <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Tarikh</th>
+                  <th style={{ textAlign: 'left', padding: '8px 8px', fontSize: '0.65rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>Nota</th>
+                  {isAdmin && <th style={{ padding: '8px 8px' }}></th>}
                 </tr>
               </thead>
               <tbody>
@@ -373,33 +387,33 @@ export default function DonationsPage() {
                     : danaSub === 'infaq' ? '#1d4ed8'
                     : '#15803d'
                   return (
-                    <tr key={d.id} className="border-b border-border last:border-0 hover:bg-light transition-colors">
-                      <td className="py-2.5 px-3 text-gray-400 text-xs">{i + 1}</td>
-                      <td className="py-2.5 px-3 font-semibold text-gray-800">{d.donor_name || 'Tanpa Nama'}</td>
+                    <tr key={d.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '8px 8px', color: '#9ca3af', fontSize: '0.7rem' }}>{i + 1}</td>
+                      <td style={{ padding: '8px 8px', fontWeight: 600, color: '#1f2937', maxWidth: 160, wordBreak: 'break-word' }}>{d.donor_name || 'Tanpa Nama'}</td>
                       {showCatCol && (
-                        <td className="py-2.5 px-3">
+                        <td style={{ padding: '8px 8px' }}>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.badge}`}>
                             {cfg.emoji} {cfg.label}
                           </span>
                         </td>
                       )}
                       {danaSub === 'kutipan_bulanan' && kelasTab === 'semua_kelas' && (
-                        <td className="py-2.5 px-3">
+                        <td style={{ padding: '8px 8px' }}>
                           <span style={{
-                            fontSize: '0.7rem', fontWeight: 700, padding: '2px 8px',
-                            borderRadius: 999, background: '#dcfce7', color: '#15803d',
+                            fontSize: '0.68rem', fontWeight: 700, padding: '2px 7px',
+                            borderRadius: 999, background: '#dcfce7', color: '#15803d', whiteSpace: 'nowrap',
                           }}>
                             {getKelas(d.donor_name || '')}
                           </span>
                         </td>
                       )}
-                      <td className="py-2.5 px-3 text-right font-bold" style={{ color: amtColor }}>
+                      <td style={{ padding: '8px 8px', textAlign: 'right', fontWeight: 700, color: amtColor, whiteSpace: 'nowrap' }}>
                         {isOut ? '–' : '+'}{fmtRM(Number(d.amount))}
                       </td>
-                      <td className="py-2.5 px-3 text-gray-500 text-xs whitespace-nowrap">{fmtDate(d.date)}</td>
-                      <td className="py-2.5 px-3 text-gray-500 text-xs max-w-[200px] truncate">{d.note || '—'}</td>
+                      <td style={{ padding: '8px 8px', color: '#6b7280', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>{fmtDate(d.date)}</td>
+                      <td style={{ padding: '8px 8px', color: '#6b7280', fontSize: '0.7rem', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.note || '—'}</td>
                       {isAdmin && (
-                        <td className="py-2.5 px-3">
+                        <td style={{ padding: '8px 8px' }}>
                           <button onClick={() => del(d.id)} className="text-red-400 hover:text-red-600 transition-colors">
                             <Trash2 size={14} />
                           </button>
@@ -410,15 +424,15 @@ export default function DonationsPage() {
                 })}
               </tbody>
               <tfoot>
-                <tr className="bg-gray-50 border-t-2 border-border">
+                <tr style={{ background: '#f9fafb', borderTop: '2px solid #e5e7eb' }}>
                   <td colSpan={2 + (showCatCol ? 1 : 0) + (danaSub === 'kutipan_bulanan' && kelasTab === 'semua_kelas' ? 1 : 0)}
-                      className="py-2.5 px-3 text-xs font-bold text-gray-600 uppercase">Jumlah</td>
-                  <td className="py-2.5 px-3 text-right font-extrabold">
-                    <span style={{ color: '#15803d', display: 'block' }}>
+                      style={{ padding: '8px 8px', fontSize: '0.72rem', fontWeight: 700, color: '#4b5563', textTransform: 'uppercase' }}>Jumlah</td>
+                  <td style={{ padding: '8px 8px', textAlign: 'right', fontWeight: 800 }}>
+                    <span style={{ color: '#15803d', display: 'block', whiteSpace: 'nowrap' }}>
                       +{fmtRM(displayed.filter(d => d.type !== 'keluar').reduce((s,d) => s + Number(d.amount), 0))}
                     </span>
                     {displayed.some(d => d.type === 'keluar') && (
-                      <span style={{ color: '#dc2626', display: 'block', fontSize: '0.75rem', fontWeight: 700 }}>
+                      <span style={{ color: '#dc2626', display: 'block', fontSize: '0.72rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
                         –{fmtRM(displayed.filter(d => d.type === 'keluar').reduce((s,d) => s + Number(d.amount), 0))}
                       </span>
                     )}
