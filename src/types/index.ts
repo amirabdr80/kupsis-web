@@ -61,5 +61,7 @@ export interface Donation {
   amount: number
   date?: string
   note?: string
+  category?: 'kutipan_bulanan' | 'infaq' | 'cikgu_alam' | 'perbelanjaan' | string
+  type?: 'masuk' | 'keluar' | string
   created_at?: string
 }

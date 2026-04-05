@@ -37,17 +37,20 @@ create table if not exists future_activities (
 );
 
 create table if not exists photo_groups (
-  id         uuid primary key default gen_random_uuid(),
-  title      text not null,
-  event_date date,
-  sort_order int  default 0,
-  created_at timestamptz default now()
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null,
+  description text,
+  date        date,
+  cover_url   text,
+  sort_order  int  default 0,
+  created_at  timestamptz default now()
 );
 
 create table if not exists photos (
   id           uuid primary key default gen_random_uuid(),
   group_id     uuid references photo_groups(id) on delete cascade,
-  storage_path text not null,
+  url          text not null,
+  caption      text,
   sort_order   int  default 0,
   created_at   timestamptz default now()
 );
@@ -66,6 +69,10 @@ create table if not exists donations (
   amount     numeric(10,2) not null,
   date       date default current_date,
   note       text,
+  -- category: 'kutipan_bulanan' | 'infaq' | 'cikgu_alam' | 'perbelanjaan'
+  category   text default 'kutipan_bulanan',
+  -- type: 'masuk' (income) | 'keluar' (expense)
+  type       text default 'masuk',
   created_at timestamptz default now()
 );
 
