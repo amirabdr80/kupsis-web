@@ -3,3 +3,9 @@ dist
 .env
 .env.local
 *.local
+upload_photos.mjs
+upload_new_photos.mjs
+run_seed_sql.mjs
+fix_langsir.mjs
+fix_perbelanjaan.mjs
+insert_infaq_apr2026.mjs

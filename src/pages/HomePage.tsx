@@ -71,6 +71,32 @@ export default function HomePage() {
   return (
     <div style={{ maxWidth: 1300, margin: '0 auto', padding: '28px 24px' }}>
 
+      {/* School hero photo */}
+      <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 20, position: 'relative', height: 220, boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+        <img
+          src="/sekolah-kupsis.jpg"
+          alt="SM Sains Kubang Pasu"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 60%' }}
+        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to right, rgba(140,50,0,0.75) 0%, rgba(0,0,0,0.1) 60%)',
+          display: 'flex', alignItems: 'center', padding: '0 32px'
+        }}>
+          <div style={{ color: 'white' }}>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+              SM Sains Kubang Pasu
+            </div>
+            <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: 4, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              Batch Salahuddin Al-Ayubi · SPM 2026
+            </div>
+            <div style={{ fontSize: '0.75rem', opacity: 0.75, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              Batu 19, Jalan Kodiang, Jitra, Kedah
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Motivational banner */}
       <div className="moti-banner mb-5">
         <blockquote>"Sesungguhnya bersama kesusahan itu ada kemudahan. Maka apabila engkau telah selesai (dari sesuatu urusan), tetaplah bekerja keras."</blockquote>
@@ -212,23 +238,41 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Info */}
-      <div className="card">
+      {/* Info + Batch Photo */}
+      <div className="card" style={{ marginTop: 20 }}>
         <div className="card-title"><span className="icon">ℹ️</span> Maklumat Batch</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 8 }}>
-          {[
-            ['Nama Batch', 'Salahuddin Al-Ayubi'],
-            ['Tahun Peperiksaan', 'SPM 2026'],
-            ['Sekolah', 'SM Sains Kubang Pasu (KUPSIS)'],
-            ['Lokasi', 'Batu 19, Jalan Kodiang, Jitra, Kedah'],
-            ['Badan Ibu Bapa', 'KSIB (Kelab Sokongan Ibu Bapa)'],
-            ['Tarikh SPM', '9 November 2026'],
-          ].map(([label, val]) => (
-            <div key={label} className="info-row" style={{ display: 'flex', gap: 8, fontSize: '0.9rem' }}>
-              <span style={{ fontWeight: 600, color: '#b34700', minWidth: 160, flexShrink: 0 }}>{label}:</span>
-              <span style={{ color: '#2c1a0e' }}>{val}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[
+              ['Nama Batch', 'Salahuddin Al-Ayubi'],
+              ['Tahun Peperiksaan', 'SPM 2026'],
+              ['Sekolah', 'SM Sains Kubang Pasu (KUPSIS)'],
+              ['Lokasi', 'Batu 19, Jalan Kodiang, Jitra, Kedah'],
+              ['Badan Ibu Bapa', 'KSIB (Kelab Sokongan Ibu Bapa)'],
+              ['Tarikh SPM', '9 November 2026'],
+            ].map(([label, val]) => (
+              <div key={label} className="info-row" style={{ display: 'flex', gap: 8, fontSize: '0.9rem' }}>
+                <span style={{ fontWeight: 600, color: '#b34700', minWidth: 160, flexShrink: 0 }}>{label}:</span>
+                <span style={{ color: '#2c1a0e' }}>{val}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', position: 'relative' }}>
+            <img
+              src="/batch-saa-2026.jpg"
+              alt="Batch Salahuddin Al-Ayyubi 2026"
+              style={{ width: '100%', display: 'block', objectFit: 'cover' }}
+            />
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(100,30,0,0.85) 0%, transparent 100%)',
+              padding: '16px 12px 10px',
+              color: 'white', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 0.5 }}>Salahuddin Al-Ayyubi Generation</div>
+              <div style={{ fontSize: '0.65rem', opacity: 0.85, marginTop: 2 }}>WE ARE UNSTOPPABLE · WE RISE FOR EXCELLENCE</div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>
