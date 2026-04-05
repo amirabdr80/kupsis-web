@@ -16,6 +16,7 @@ export default function GalleryPage() {
   const [addingGroup, setAddingGroup] = useState(false)
   const [uploadingGroupId, setUploadingGroupId] = useState<string | null>(null)
   const [editingCaption, setEditingCaption] = useState<{ photoId: string; value: string } | null>(null)
+  const [editingGroup, setEditingGroup] = useState<{ groupId: string; name: string; date: string } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { loadGallery() }, [])
@@ -90,6 +91,13 @@ export default function GalleryPage() {
     setGroups(prev => prev.map(g => ({ ...g, photos: (g.photos || []).filter((p: Photo) => p.id !== photoId) })))
   }
 
+  async function saveGroup(groupId: string, name: string, date: string) {
+    if (!name.trim()) return
+    await supabase.from('photo_groups').update({ name: name.trim(), date: date || null }).eq('id', groupId)
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, name: name.trim(), date: date || undefined } : g))
+    setEditingGroup(null)
+  }
+
   async function saveCaption(photoId: string, caption: string) {
     await supabase.from('photos').update({ caption: caption.trim() || null }).eq('id', photoId)
     setGroups(prev => prev.map(g => ({
@@ -161,12 +169,53 @@ export default function GalleryPage() {
           return (
             <div key={group.id} className="card">
               <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
-                <div>
-                  <h2 className="font-bold text-primary text-base">{group.name}</h2>
-                  {group.date && (
-                    <p className="text-gray-400 text-xs mt-0.5">{new Date(group.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <div style={{ flex: 1 }}>
+                  {/* Editing group title/date */}
+                  {isAdmin && editingGroup?.groupId === group.id ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <input
+                        autoFocus
+                        value={editingGroup.name}
+                        onChange={e => setEditingGroup({ ...editingGroup, name: e.target.value })}
+                        onKeyDown={e => { if (e.key === 'Enter') saveGroup(group.id, editingGroup.name, editingGroup.date); if (e.key === 'Escape') setEditingGroup(null) }}
+                        placeholder="Tajuk kumpulan..."
+                        style={{ fontWeight: 700, fontSize: '1rem', border: '2px solid #f97316', borderRadius: 6, padding: '4px 8px', outline: 'none', color: '#9a3412', width: '100%' }}
+                      />
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <input
+                          type="date"
+                          value={editingGroup.date}
+                          onChange={e => setEditingGroup({ ...editingGroup, date: e.target.value })}
+                          style={{ fontSize: '0.75rem', border: '1px solid #d1d5db', borderRadius: 6, padding: '3px 6px' }}
+                        />
+                        <button onClick={() => saveGroup(group.id, editingGroup.name, editingGroup.date)} style={{ background: '#16a34a', color: 'white', borderRadius: 6, padding: '4px 10px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 3 }}>
+                          <Check size={13} /> Simpan
+                        </button>
+                        <button onClick={() => setEditingGroup(null)} style={{ background: '#6b7280', color: 'white', borderRadius: 6, padding: '4px 10px', fontSize: '0.75rem' }}>
+                          Batal
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div>
+                        <h2 className="font-bold text-primary text-base">{group.name}</h2>
+                        {group.date && (
+                          <p className="text-gray-400 text-xs mt-0.5">{new Date(group.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        )}
+                        <p className="text-gray-400 text-xs">{(group.photos || []).length} foto</p>
+                      </div>
+                      {isAdmin && (
+                        <button
+                          onClick={() => setEditingGroup({ groupId: group.id, name: group.name, date: group.date || '' })}
+                          title="Edit tajuk"
+                          style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 6, padding: '3px 7px', color: '#c2410c', display: 'flex', alignItems: 'center', gap: 3, fontSize: '0.7rem' }}
+                        >
+                          <Pencil size={11} /> Edit
+                        </button>
+                      )}
+                    </div>
                   )}
-                  <p className="text-gray-400 text-xs">{(group.photos || []).length} foto</p>
                 </div>
                 {isAdmin && (
                   <div className="flex gap-2">
