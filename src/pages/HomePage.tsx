@@ -131,10 +131,6 @@ export default function HomePage() {
           <div className="stat-num">{stats.photos}</div>
           <div className="stat-label">📷 Album Foto</div>
         </div>
-        <div className="stat-box green">
-          <div className="stat-num" style={{ fontSize: '1.4rem' }}>RM {stats.donations.toFixed(0)}</div>
-          <div className="stat-label">💚 Dana SAA Terkumpul</div>
-        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
