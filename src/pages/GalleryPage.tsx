@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { X, Upload, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, Upload, Trash2, Plus, ChevronLeft, ChevronRight, Pencil, Check } from 'lucide-react'
 import { supabase, STORAGE_BUCKET } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { PhotoGroup, Photo } from '../types'
@@ -8,13 +8,14 @@ export default function GalleryPage() {
   const { isAdmin } = useAuth()
   const [groups, setGroups] = useState<PhotoGroup[]>([])
   const [loading, setLoading] = useState(true)
-  const [lightbox, setLightbox] = useState<{ url: string; idx: number; urls: string[] } | null>(null)
+  const [lightbox, setLightbox] = useState<{ photos: Photo[]; idx: number } | null>(null)
 
   // Admin state
   const [newGroupTitle, setNewGroupTitle] = useState('')
   const [newGroupDate, setNewGroupDate] = useState('')
   const [addingGroup, setAddingGroup] = useState(false)
   const [uploadingGroupId, setUploadingGroupId] = useState<string | null>(null)
+  const [editingCaption, setEditingCaption] = useState<{ photoId: string; value: string } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { loadGallery() }, [])
@@ -89,18 +90,25 @@ export default function GalleryPage() {
     setGroups(prev => prev.map(g => ({ ...g, photos: (g.photos || []).filter((p: Photo) => p.id !== photoId) })))
   }
 
-  const openLightbox = (url: string, urls: string[]) => {
-    setLightbox({ url, idx: urls.indexOf(url), urls })
+  async function saveCaption(photoId: string, caption: string) {
+    await supabase.from('photos').update({ caption: caption.trim() || null }).eq('id', photoId)
+    setGroups(prev => prev.map(g => ({
+      ...g,
+      photos: (g.photos || []).map((p: Photo) => p.id === photoId ? { ...p, caption: caption.trim() || undefined } : p)
+    })))
+    setEditingCaption(null)
+  }
+
+  const openLightbox = (photo: Photo, photos: Photo[]) => {
+    setLightbox({ photos, idx: photos.findIndex(p => p.id === photo.id) })
   }
   const nextPhoto = () => {
     if (!lightbox) return
-    const idx = (lightbox.idx + 1) % lightbox.urls.length
-    setLightbox({ ...lightbox, url: lightbox.urls[idx], idx })
+    setLightbox({ ...lightbox, idx: (lightbox.idx + 1) % lightbox.photos.length })
   }
   const prevPhoto = () => {
     if (!lightbox) return
-    const idx = (lightbox.idx - 1 + lightbox.urls.length) % lightbox.urls.length
-    setLightbox({ ...lightbox, url: lightbox.urls[idx], idx })
+    setLightbox({ ...lightbox, idx: (lightbox.idx - 1 + lightbox.photos.length) % lightbox.photos.length })
   }
 
   if (loading) return <div className="text-center py-20 text-gray-400">Memuatkan galeri...</div>
@@ -150,7 +158,6 @@ export default function GalleryPage() {
       {/* Groups */}
       <div className="space-y-8">
         {groups.map(group => {
-          const urls = (group.photos || []).map((p: Photo) => p.url || '')
           return (
             <div key={group.id} className="card">
               <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
@@ -190,21 +197,58 @@ export default function GalleryPage() {
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {(group.photos || []).map((ph: Photo) => (
-                    <div key={ph.id} className="relative group aspect-square overflow-hidden rounded-lg bg-gray-100">
-                      <img
-                        src={ph.url}
-                        alt=""
-                        className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                        onClick={() => openLightbox(ph.url || '', urls)}
-                        loading="lazy"
-                      />
+                    <div key={ph.id} className="relative group rounded-lg overflow-hidden bg-gray-100">
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={ph.url}
+                          alt={ph.caption || ''}
+                          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() => openLightbox(ph, group.photos || [])}
+                          loading="lazy"
+                        />
+                      </div>
+                      {/* Admin controls */}
                       {isAdmin && (
-                        <button
-                          onClick={() => deletePhoto(ph.id)}
-                          className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X size={11} />
-                        </button>
+                        <>
+                          <button
+                            onClick={() => deletePhoto(ph.id)}
+                            className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X size={11} />
+                          </button>
+                          <button
+                            onClick={() => setEditingCaption({ photoId: ph.id, value: ph.caption || '' })}
+                            className="absolute top-1 left-1 bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Edit caption"
+                          >
+                            <Pencil size={10} />
+                          </button>
+                        </>
+                      )}
+                      {/* Caption display */}
+                      {ph.caption && editingCaption?.photoId !== ph.id && (
+                        <div style={{ fontSize: '0.65rem', color: '#374151', padding: '3px 5px', background: '#f3f4f6', lineHeight: 1.3 }}>
+                          {ph.caption}
+                        </div>
+                      )}
+                      {/* Caption edit inline */}
+                      {isAdmin && editingCaption?.photoId === ph.id && (
+                        <div style={{ padding: '4px', background: '#eff6ff', display: 'flex', gap: 3, alignItems: 'center' }}>
+                          <input
+                            autoFocus
+                            value={editingCaption.value}
+                            onChange={e => setEditingCaption({ ...editingCaption, value: e.target.value })}
+                            onKeyDown={e => { if (e.key === 'Enter') saveCaption(ph.id, editingCaption.value); if (e.key === 'Escape') setEditingCaption(null) }}
+                            placeholder="Tulis caption..."
+                            style={{ fontSize: '0.65rem', flex: 1, border: '1px solid #93c5fd', borderRadius: 4, padding: '2px 4px', outline: 'none' }}
+                          />
+                          <button onClick={() => saveCaption(ph.id, editingCaption.value)} style={{ background: '#2563eb', color: 'white', borderRadius: 4, padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
+                            <Check size={10} />
+                          </button>
+                          <button onClick={() => setEditingCaption(null)} style={{ background: '#6b7280', color: 'white', borderRadius: 4, padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
+                            <X size={10} />
+                          </button>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -216,21 +260,31 @@ export default function GalleryPage() {
       </div>
 
       {/* Lightbox */}
-      {lightbox && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50" onClick={() => setLightbox(null)}>
-          <button className="absolute left-3 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={e => { e.stopPropagation(); prevPhoto() }}>
-            <ChevronLeft size={24} />
-          </button>
-          <img src={lightbox.url} alt="" className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl" onClick={e => e.stopPropagation()} />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={e => { e.stopPropagation(); nextPhoto() }}>
-            <ChevronRight size={24} />
-          </button>
-          <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={() => setLightbox(null)}>
-            <X size={20} />
-          </button>
-          <div className="absolute bottom-4 text-white/60 text-sm">{lightbox.idx + 1} / {lightbox.urls.length}</div>
-        </div>
-      )}
+      {lightbox && (() => {
+        const currentPhoto = lightbox.photos[lightbox.idx]
+        return (
+          <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50" onClick={() => setLightbox(null)}>
+            <button className="absolute left-3 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={e => { e.stopPropagation(); prevPhoto() }}>
+              <ChevronLeft size={24} />
+            </button>
+            <div className="flex flex-col items-center" onClick={e => e.stopPropagation()}>
+              <img src={currentPhoto.url} alt={currentPhoto.caption || ''} className="max-h-[82vh] max-w-[90vw] object-contain rounded-lg shadow-2xl" />
+              {currentPhoto.caption && (
+                <div style={{ marginTop: 12, color: 'white', fontSize: '0.9rem', textAlign: 'center', maxWidth: '80vw', background: 'rgba(0,0,0,0.5)', padding: '6px 16px', borderRadius: 8 }}>
+                  {currentPhoto.caption}
+                </div>
+              )}
+            </div>
+            <button className="absolute right-3 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={e => { e.stopPropagation(); nextPhoto() }}>
+              <ChevronRight size={24} />
+            </button>
+            <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/80" onClick={() => setLightbox(null)}>
+              <X size={20} />
+            </button>
+            <div className="absolute bottom-4 text-white/60 text-sm">{lightbox.idx + 1} / {lightbox.photos.length}</div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
