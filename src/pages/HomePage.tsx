@@ -35,15 +35,17 @@ export default function HomePage() {
         supabase.from('past_activities').select('id', { count: 'exact', head: true }),
         supabase.from('future_activities').select('id', { count: 'exact', head: true }),
         supabase.from('photo_groups').select('id', { count: 'exact', head: true }),
-        supabase.from('donations').select('amount'),
+        supabase.from('donations').select('amount, type'),
       ])
-      const total = (donations.data || []).reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
+      const total = (donations.data || [])
+        .filter((d: { amount: number; type?: string }) => d.type !== 'keluar')
+        .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
       setStats({ past: past.count ?? 0, future: future.count ?? 0, photos: photos.count ?? 0, donations: total })
     }
     load()
   }, [])
 
-  const TARGET_DONATIONS = 5000
+  const TARGET_DONATIONS = 100000
   const donationPct = Math.min(100, (stats.donations / TARGET_DONATIONS) * 100)
 
   const countdownBoxes = [
@@ -125,7 +127,7 @@ export default function HomePage() {
         </div>
         <div className="stat-box green">
           <div className="stat-num" style={{ fontSize: '1.4rem' }}>RM {stats.donations.toFixed(0)}</div>
-          <div className="stat-label">💚 Tabung Infaq Terkumpul</div>
+          <div className="stat-label">💚 Dana SAA Terkumpul</div>
         </div>
       </div>
 
@@ -133,14 +135,17 @@ export default function HomePage() {
 
         {/* Donation progress */}
         <div className="card">
-          <div className="card-title"><span className="icon">💚</span> Tabung Infaq SAA 2026</div>
+          <div className="card-title"><span className="icon">💚</span> Dana SAA 2026</div>
+          <div style={{ fontSize: '0.75rem', color: '#8a6040', marginBottom: 6 }}>
+            Kutipan Bulanan · Dana Infaq SAA · (tidak termasuk perbelanjaan)
+          </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: 4, color: '#2c1a0e' }}>
-            <span>Terkumpul: <strong>RM {stats.donations.toFixed(2)}</strong></span>
+            <span>Terkumpul: <strong>RM {stats.donations.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
             <span>Sasaran: <strong>RM {TARGET_DONATIONS.toLocaleString()}</strong></span>
           </div>
           <div className="progress-bar"><div className="progress-fill green" style={{ width: `${donationPct}%` }} /></div>
-          <div style={{ textAlign: 'right', fontSize: '0.78rem', color: '#8a6040', marginTop: 4 }}>{donationPct.toFixed(1)}% daripada sasaran</div>
-          <Link to="/donations" className="btn-add mt-4 text-xs" style={{ display: 'inline-flex' }}>Lihat Rekod Derma →</Link>
+          <div style={{ textAlign: 'right', fontSize: '0.78rem', color: '#8a6040', marginTop: 4 }}>{donationPct.toFixed(1)}% daripada sasaran RM100,000</div>
+          <Link to="/donations" className="btn-add mt-4 text-xs" style={{ display: 'inline-flex' }}>Lihat Dana SAA →</Link>
         </div>
 
         {/* Quick links */}
@@ -152,7 +157,7 @@ export default function HomePage() {
               { to: '/activities', label: '📋 Senarai Aktiviti Lepas' },
               { to: '/upcoming',   label: '🔮 Aktiviti Akan Datang' },
               { to: '/gallery',    label: '📷 Galeri Foto Aktiviti' },
-              { to: '/donations',  label: '💚 Tabung Infaq SAA 2026' },
+              { to: '/donations',  label: '💚 Dana SAA' },
             ].map(l => (
               <Link key={l.to} to={l.to}
                 style={{ display: 'block', padding: '8px 14px', borderRadius: 8, background: '#fff3e8', color: '#b34700', fontWeight: 600, fontSize: '0.88rem', textDecoration: 'none', transition: 'background 0.15s' }}

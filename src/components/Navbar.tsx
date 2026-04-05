@@ -8,7 +8,7 @@ const tabs = [
   { to: '/activities', label: '📋 Aktiviti Lepas' },
   { to: '/upcoming',   label: '🔮 Akan Datang' },
   { to: '/gallery',    label: '📷 Galeri Foto' },
-  { to: '/donations',  label: '💚 Tabung Infaq' },
+  { to: '/donations',  label: '💚 Dana SAA' },
 ]
 
 function KupsisLogo() {
