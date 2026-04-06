@@ -9,6 +9,7 @@ export interface PastActivity {
   cost?: string
   organiser?: string
   status?: string
+  poster_url?: string
   sort_order?: number
   created_at?: string
 }
@@ -25,6 +26,7 @@ export interface FutureActivity {
   organiser?: string
   status?: string
   subject?: string
+  poster_url?: string
   sort_order?: number
   created_at?: string
 }

@@ -12,3 +12,4 @@ insert_infaq_apr2026.mjs
 insert_upsa_2026.mjs
 migrate_subject_column.mjs
 fix_duplicates.mjs
+insert_events_with_posters.mjs

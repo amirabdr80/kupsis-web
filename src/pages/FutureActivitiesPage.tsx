@@ -294,6 +294,30 @@ export default function FutureActivitiesPage() {
                           gap: 10,
                         }}
                       >
+                        {/* Poster Thumbnail */}
+                        {a.poster_url && (
+                          <a
+                            href={a.poster_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ flexShrink: 0, display: 'block' }}
+                            title="Lihat poster"
+                          >
+                            <img
+                              src={a.poster_url}
+                              alt="Poster"
+                              style={{
+                                width: 'clamp(54px,14vw,80px)',
+                                height: 'clamp(76px,20vw,112px)',
+                                objectFit: 'cover',
+                                borderRadius: 8,
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                border: `2px solid ${section.borderColor}40`,
+                              }}
+                            />
+                          </a>
+                        )}
+
                         <div style={{ flex: 1, minWidth: 0 }}>
                           {/* Name + Status + Calendar link */}
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>

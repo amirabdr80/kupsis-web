@@ -71,7 +71,26 @@ export default function PastActivitiesPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {activities.map((a, i) => (
               <div key={a.id} style={{ border: '1px solid #f0d5bc', borderRadius: 10, padding: '12px 14px', background: '#fffaf6', borderLeft: '4px solid #e8671a' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+
+                  {/* Poster thumbnail */}
+                  {a.poster_url && (
+                    <a href={a.poster_url} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0 }} title="Lihat poster">
+                      <img
+                        src={a.poster_url}
+                        alt="Poster"
+                        style={{
+                          width: 'clamp(50px,12vw,72px)',
+                          height: 'clamp(70px,17vw,100px)',
+                          objectFit: 'cover',
+                          borderRadius: 7,
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                          border: '2px solid #f0d5bc',
+                        }}
+                      />
+                    </a>
+                  )}
+
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
                       <span style={{ fontSize: '0.7rem', color: '#8a6040', fontWeight: 600, background: '#fff3e8', borderRadius: 4, padding: '1px 6px' }}>#{i + 1}</span>
@@ -87,6 +106,7 @@ export default function PastActivitiesPage() {
                     </div>
                     {a.description && <p style={{ fontSize: '0.78rem', color: '#8a6040', marginTop: 5, lineHeight: 1.4 }}>{a.description}</p>}
                   </div>
+
                   {isAdmin && (
                     <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
                       <button className="btn-edit" onClick={() => openEdit(a)}>✏️</button>
