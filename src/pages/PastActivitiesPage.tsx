@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { PastActivity } from '../types'
@@ -17,6 +17,25 @@ export default function PastActivitiesPage() {
   const [modal, setModal] = useState(false)
   const [editing, setEditing] = useState<Partial<PastActivity>>(EMPTY)
   const [saving, setSaving] = useState(false)
+  const [uploadingPoster, setUploadingPoster] = useState(false)
+  const posterInputRef = useRef<HTMLInputElement>(null)
+
+  async function handlePosterUpload(file: File) {
+    if (!file) return
+    setUploadingPoster(true)
+    try {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+      const fileName = `activity-${Date.now()}.${ext}`
+      const { error } = await supabase.storage
+        .from('activity-posters')
+        .upload(fileName, file, { contentType: file.type, upsert: true })
+      if (error) { alert('Upload gagal: ' + error.message); return }
+      const { data: { publicUrl } } = supabase.storage.from('activity-posters').getPublicUrl(fileName)
+      setEditing(p => ({ ...p, poster_url: publicUrl }))
+    } finally {
+      setUploadingPoster(false)
+    }
+  }
 
   useEffect(() => { load() }, [])
 
@@ -150,6 +169,62 @@ export default function PastActivitiesPage() {
               <div style={{ gridColumn: '1/-1' }}>
                 <label className="label">Penerangan</label>
                 <textarea className="input" style={{ minHeight: 60, resize: 'vertical' }} value={editing.description||''} onChange={e => setEditing(p => ({ ...p, description: e.target.value }))} />
+              </div>
+
+              {/* ── Poster Upload ── */}
+              <div style={{ gridColumn: '1/-1' }}>
+                <label className="label">Poster Acara</label>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <div style={{
+                    width: 80, height: 112, borderRadius: 8, overflow: 'hidden', flexShrink: 0,
+                    border: '2px dashed #f0d5bc', background: '#fffaf6',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {editing.poster_url
+                      ? <img src={editing.poster_url} alt="Poster" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontSize: '2rem' }}>🖼️</span>
+                    }
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <input
+                      ref={posterInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => { const f = e.target.files?.[0]; if (f) handlePosterUpload(f) }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => posterInputRef.current?.click()}
+                      disabled={uploadingPoster}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
+                        background: '#e8671a', color: 'white', border: 'none',
+                        fontWeight: 600, fontSize: '0.82rem',
+                        opacity: uploadingPoster ? 0.6 : 1,
+                      }}
+                    >
+                      📸 {uploadingPoster ? 'Mengupload...' : editing.poster_url ? 'Tukar Poster' : 'Upload Poster'}
+                    </button>
+                    {editing.poster_url && (
+                      <button
+                        type="button"
+                        onClick={() => setEditing(p => ({ ...p, poster_url: '' }))}
+                        style={{
+                          padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
+                          background: 'transparent', color: '#ef4444',
+                          border: '1px solid #fca5a5', fontWeight: 600, fontSize: '0.8rem',
+                        }}
+                      >
+                        🗑️ Buang Poster
+                      </button>
+                    )}
+                    <p style={{ fontSize: '0.72rem', color: '#8a6040', margin: 0 }}>
+                      JPG / PNG · Saiz cadangan: potret (3:4)
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 18 }}>
