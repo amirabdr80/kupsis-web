@@ -33,7 +33,7 @@ const SECTIONS: Section[] = [
     borderColor: '#7c3aed',
     bgColor: '#faf5ff',
     headerBg: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-    champions: ['En. Azmi Abdul Latip'],
+    champions: [],
   },
   {
     key: 'matematik',
@@ -60,7 +60,7 @@ const SECTIONS: Section[] = [
     borderColor: '#d97706',
     bgColor: '#fffbeb',
     headerBg: 'linear-gradient(135deg, #d97706, #f59e0b)',
-    champions: ['Pn. Yati Timan', 'En. Amir Abd Rahim'],
+    champions: ['Pn. Haryati Timan', 'En. Amir Abd Rahim'],
   },
   {
     key: 'kimia',
@@ -78,7 +78,7 @@ const SECTIONS: Section[] = [
     borderColor: '#0e7490',
     bgColor: '#ecfeff',
     headerBg: 'linear-gradient(135deg, #0e7490, #06b6d4)',
-    champions: ['Dr. Salsabila Ahmad'],
+    champions: ['Dr. Salsabila Ahmad', 'En. Azmi Abdul Latip'],
   },
   {
     key: 'general',
