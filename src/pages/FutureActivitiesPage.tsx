@@ -27,15 +27,6 @@ interface Section {
 
 const SECTIONS: Section[] = [
   {
-    key: 'peperiksaan',
-    emoji: '🎓',
-    label: 'Peperiksaan',
-    borderColor: '#7c3aed',
-    bgColor: '#faf5ff',
-    headerBg: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-    champions: [],
-  },
-  {
     key: 'matematik',
     emoji: '📘',
     label: 'Matematik',
@@ -79,6 +70,24 @@ const SECTIONS: Section[] = [
     bgColor: '#ecfeff',
     headerBg: 'linear-gradient(135deg, #0e7490, #06b6d4)',
     champions: ['Dr. Salsabila Ahmad', 'En. Azmi Abdul Latip'],
+  },
+  {
+    key: 'peperiksaan',
+    emoji: '🎓',
+    label: 'Peperiksaan',
+    borderColor: '#7c3aed',
+    bgColor: '#faf5ff',
+    headerBg: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+    champions: [],
+  },
+  {
+    key: 'kelas_tambahan',
+    emoji: '🏫',
+    label: 'Kelas Tambahan Guru KUPSIS',
+    borderColor: '#be185d',
+    bgColor: '#fdf2f8',
+    headerBg: 'linear-gradient(135deg, #be185d, #ec4899)',
+    champions: [],
   },
   {
     key: 'general',
