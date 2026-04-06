@@ -100,7 +100,7 @@ export default function HomePage() {
       {/* Motivational banner */}
       <div className="moti-banner mb-5">
         <blockquote>"Sesungguhnya bersama kesusahan itu ada kemudahan. Maka apabila engkau telah selesai (dari sesuatu urusan), tetaplah bekerja keras."</blockquote>
-        <cite>— Al-Inshirah 94:5-7 · Semoga ALLAH permudahkan perjalanan SPM 2026 kita</cite>
+        <cite>— Al-Inshirah 94:6-7 · Semoga ALLAH permudahkan perjalanan SPM 2026 kita</cite>
       </div>
 
       {/* Countdowns side by side */}
