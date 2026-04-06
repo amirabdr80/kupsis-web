@@ -386,10 +386,18 @@ export default function DonationsPage() {
                     : mainSection === 'cikgu_alam' ? '#7c3aed'
                     : danaSub === 'infaq' ? '#1d4ed8'
                     : '#15803d'
+                  // Hide donor name for infaq records from non-admin users
+                  const isInfaq = d.category === 'infaq'
+                  const displayName = (isInfaq && !isAdmin)
+                    ? 'Penderma Ikhlas 🤍'
+                    : (d.donor_name || 'Tanpa Nama')
+
                   return (
                     <tr key={d.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                       <td style={{ padding: '8px 8px', color: '#9ca3af', fontSize: '0.7rem' }}>{i + 1}</td>
-                      <td style={{ padding: '8px 8px', fontWeight: 600, color: '#1f2937', maxWidth: 160, wordBreak: 'break-word' }}>{d.donor_name || 'Tanpa Nama'}</td>
+                      <td style={{ padding: '8px 8px', fontWeight: 600, color: isInfaq && !isAdmin ? '#6b7280' : '#1f2937', maxWidth: 160, wordBreak: 'break-word', fontStyle: isInfaq && !isAdmin ? 'italic' : 'normal' }}>
+                        {displayName}
+                      </td>
                       {showCatCol && (
                         <td style={{ padding: '8px 8px' }}>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.badge}`}>
