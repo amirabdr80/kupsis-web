@@ -109,7 +109,7 @@ const EMPTY: Partial<FutureActivity> = {
 }
 
 export default function FutureActivitiesPage() {
-  const { isAdmin } = useAuth()
+  const { isAdmin, canEditSubject } = useAuth()
   const [activities, setActivities] = useState<FutureActivity[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState(false)
@@ -263,7 +263,7 @@ export default function FutureActivitiesPage() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                {isAdmin && (
+                {canEditSubject(section.key) && (
                   <button
                     onClick={e => { e.stopPropagation(); openNew(section.key) }}
                     style={{
@@ -296,7 +296,7 @@ export default function FutureActivitiesPage() {
                 {sectionActivities.length === 0 ? (
                   <div style={{ textAlign: 'center', color: '#9ca3af', fontSize: '0.85rem', padding: '8px 0' }}>
                     Tiada aktiviti dirancang lagi untuk bahagian ini.
-                    {isAdmin && (
+                    {canEditSubject(section.key) && (
                       <span
                         style={{ color: section.borderColor, cursor: 'pointer', marginLeft: 8, fontWeight: 600 }}
                         onClick={() => openNew(section.key)}
@@ -383,7 +383,7 @@ export default function FutureActivitiesPage() {
                           )}
                         </div>
 
-                        {isAdmin && (
+                        {canEditSubject(a.subject || 'general') && (
                           <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
                             <button
                               onClick={() => openEdit(a)}
@@ -392,13 +392,15 @@ export default function FutureActivitiesPage() {
                             >
                               <Pencil size={14} />
                             </button>
-                            <button
-                              onClick={() => del(a.id)}
-                              style={{ padding: '5px 6px', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: 6 }}
-                              title="Padam"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            {isAdmin && (
+                              <button
+                                onClick={() => del(a.id)}
+                                style={{ padding: '5px 6px', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: 6 }}
+                                title="Padam"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

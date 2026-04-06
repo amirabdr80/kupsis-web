@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { PhotoGroup, Photo } from '../types'
 
 export default function GalleryPage() {
-  const { isAdmin } = useAuth()
+  const { canGallery } = useAuth()
   const [groups, setGroups] = useState<PhotoGroup[]>([])
   const [loading, setLoading] = useState(true)
   const [lightbox, setLightbox] = useState<{ photos: Photo[]; idx: number } | null>(null)
@@ -128,7 +128,7 @@ export default function GalleryPage() {
           <h1 className="text-2xl font-bold text-primary">📷 Galeri Foto Aktiviti</h1>
           <p className="text-gray-500 text-sm mt-1">{groups.length} kumpulan foto · Batch Salahuddin Al-Ayubi</p>
         </div>
-        {isAdmin && (
+        {canGallery && (
           <button onClick={() => setAddingGroup(true)} className="btn-primary flex items-center gap-1">
             <Plus size={16} /> Kumpulan Baru
           </button>
@@ -136,7 +136,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Add Group Form */}
-      {isAdmin && addingGroup && (
+      {canGallery && addingGroup && (
         <div className="card mb-6 border-2 border-dashed border-primary/30">
           <h3 className="font-semibold text-primary mb-3">Tambah Kumpulan Foto Baru</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
@@ -159,7 +159,7 @@ export default function GalleryPage() {
       {groups.length === 0 && (
         <div className="text-center py-20 text-gray-400">
           <div className="text-5xl mb-3">📷</div>
-          <p>Tiada foto lagi. {isAdmin ? 'Klik "Kumpulan Baru" untuk mula menambah foto.' : ''}</p>
+          <p>Tiada foto lagi. {canGallery ? 'Klik "Kumpulan Baru" untuk mula menambah foto.' : ''}</p>
         </div>
       )}
 
@@ -171,7 +171,7 @@ export default function GalleryPage() {
               <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
                 <div style={{ flex: 1 }}>
                   {/* Editing group title/date */}
-                  {isAdmin && editingGroup?.groupId === group.id ? (
+                  {canGallery && editingGroup?.groupId === group.id ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       <input
                         autoFocus
@@ -205,7 +205,7 @@ export default function GalleryPage() {
                         )}
                         <p className="text-gray-400 text-xs">{(group.photos || []).length} foto</p>
                       </div>
-                      {isAdmin && (
+                      {canGallery && (
                         <button
                           onClick={() => setEditingGroup({ groupId: group.id, name: group.name, date: group.date || '' })}
                           title="Edit tajuk"
@@ -217,7 +217,7 @@ export default function GalleryPage() {
                     </div>
                   )}
                 </div>
-                {isAdmin && (
+                {canGallery && (
                   <div className="flex gap-2">
                     <button
                       onClick={() => { setUploadingGroupId(group.id); fileRef.current?.click() }}
@@ -257,7 +257,7 @@ export default function GalleryPage() {
                         />
                       </div>
                       {/* Admin controls */}
-                      {isAdmin && (
+                      {canGallery && (
                         <>
                           <button
                             onClick={() => deletePhoto(ph.id)}
@@ -281,7 +281,7 @@ export default function GalleryPage() {
                         </div>
                       )}
                       {/* Caption edit inline */}
-                      {isAdmin && editingCaption?.photoId === ph.id && (
+                      {canGallery && editingCaption?.photoId === ph.id && (
                         <div style={{ padding: '4px', background: '#eff6ff', display: 'flex', gap: 3, alignItems: 'center' }}>
                           <input
                             autoFocus

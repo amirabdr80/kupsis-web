@@ -9,3 +9,5 @@ run_seed_sql.mjs
 fix_*.mjs
 insert_*.mjs
 migrate_*.mjs
+invite_*.mjs
+update_*.mjs
