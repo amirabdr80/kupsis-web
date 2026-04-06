@@ -234,7 +234,7 @@ export default function FutureActivitiesPage() {
                 )}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, shrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                 {isAdmin && (
                   <button
                     onClick={e => { e.stopPropagation(); openNew(section.key) }}
