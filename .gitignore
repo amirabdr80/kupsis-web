@@ -3,13 +3,9 @@ dist
 .env
 .env.local
 *.local
-upload_photos.mjs
-upload_new_photos.mjs
+# Helper scripts with Supabase service key
+upload_*.mjs
 run_seed_sql.mjs
-fix_langsir.mjs
-fix_perbelanjaan.mjs
-insert_infaq_apr2026.mjs
-insert_upsa_2026.mjs
-migrate_subject_column.mjs
-fix_duplicates.mjs
-insert_events_with_posters.mjs
+fix_*.mjs
+insert_*.mjs
+migrate_*.mjs
