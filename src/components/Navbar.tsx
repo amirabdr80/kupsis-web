@@ -6,7 +6,7 @@ const tabs = [
   { to: '/',           label: '🏠 Utama' },
   { to: '/calendar',   label: '📅 Kalendar PB/OT/LW' },
   { to: '/activities', label: '📋 Aktiviti Lepas' },
-  { to: '/upcoming',   label: '🔮 Akan Datang' },
+  { to: '/upcoming',   label: '🔮 Aktiviti Akan Datang' },
   { to: '/gallery',    label: '📷 Galeri Foto' },
   { to: '/donations',  label: '💚 Dana SAA' },
 ]

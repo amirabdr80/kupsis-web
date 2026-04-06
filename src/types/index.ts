@@ -24,6 +24,7 @@ export interface FutureActivity {
   cost?: string
   organiser?: string
   status?: string
+  subject?: string
   sort_order?: number
   created_at?: string
 }
