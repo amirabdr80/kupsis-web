@@ -8,41 +8,52 @@ interface UserRole {
   can_gallery: boolean
 }
 
-interface AuthState {
-  session: Session | null
-  loading: boolean
-  isAdmin: boolean
-  isChampion: boolean
-  championSubjects: string[]
-  canGallery: boolean
-  canEditSubject: (subject: string) => boolean
-}
-
-export function useAuth(): AuthState & {
-  signIn: (email: string, password: string) => Promise<any>
-  signOut: () => Promise<any>
-} {
+export function useAuth() {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState<UserRole | null>(null)
+  const [roleFetched, setRoleFetched] = useState(false)
 
   async function fetchRole(userId: string) {
-    const { data } = await supabase
-      .from('user_roles')
-      .select('role, subjects, can_gallery')
-      .eq('user_id', userId)
-      .single()
-    setUserRole(data ?? null)
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role, subjects, can_gallery')
+        .eq('user_id', userId)
+        .single()
+
+      // Jika table belum wujud atau tiada rekod → null (admin penuh)
+      if (error || !data) {
+        setUserRole(null)
+      } else {
+        setUserRole(data as UserRole)
+      }
+    } catch {
+      // Sebarang error → fallback ke null (admin penuh untuk user yg log masuk)
+      setUserRole(null)
+    } finally {
+      setRoleFetched(true)
+    }
   }
 
   useEffect(() => {
+    // Timeout safety — pastikan loading sentiasa jadi false walaupun ada error
+    const timeout = setTimeout(() => setLoading(false), 5000)
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session?.user?.id) {
-        fetchRole(session.user.id).finally(() => setLoading(false))
+        fetchRole(session.user.id).finally(() => {
+          clearTimeout(timeout)
+          setLoading(false)
+        })
       } else {
+        clearTimeout(timeout)
         setLoading(false)
       }
+    }).catch(() => {
+      clearTimeout(timeout)
+      setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -51,10 +62,14 @@ export function useAuth(): AuthState & {
         fetchRole(session.user.id)
       } else {
         setUserRole(null)
+        setRoleFetched(true)
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [])
 
   const signIn = (email: string, password: string) =>
@@ -62,10 +77,10 @@ export function useAuth(): AuthState & {
 
   const signOut = () => supabase.auth.signOut()
 
-  // Logged in but NO entry in user_roles → full admin (backward compatible for Amir)
-  const loggedIn = !!session
-  const isAdmin  = loggedIn && (userRole === null || userRole.role === 'admin')
-  const isChampion = loggedIn && userRole?.role === 'champion'
+  const loggedIn  = !!session
+  // Tiada entry dalam user_roles = admin penuh (backward compatible untuk Amir)
+  const isAdmin   = loggedIn && (!roleFetched || userRole === null || userRole.role === 'admin')
+  const isChampion = loggedIn && roleFetched && userRole?.role === 'champion'
   const championSubjects: string[] = isChampion ? (userRole?.subjects ?? []) : []
   const canGallery = isAdmin || (isChampion && (userRole?.can_gallery ?? false))
 
