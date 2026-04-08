@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { FutureActivity } from '../types'
+import { fmtDate } from '../lib/dateUtils'
 
 // ─── Status ──────────────────────────────────────────────────────────────────
 const STATUS_OPTIONS = ['Dirancang', 'Sedang Berjalan', 'Selesai', 'Dibatalkan']
@@ -399,9 +400,7 @@ export default function FutureActivitiesPage() {
 
                           {/* Detail chips */}
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 12px', fontSize: 'clamp(0.72rem,2.2vw,0.82rem)', color: '#6b7280' }}>
-                            {a.date && <span>📅 {/^\d{4}-\d{2}-\d{2}$/.test(a.date)
-                              ? new Date(a.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })
-                              : a.date}</span>}
+                            {a.date && <span>📅 {fmtDate(a.date)}</span>}
                             {a.time        && <span>⏰ {a.time}</span>}
                             {a.place       && <span>📍 {a.place}</span>}
                             {a.participants && <span>👥 {a.participants}</span>}

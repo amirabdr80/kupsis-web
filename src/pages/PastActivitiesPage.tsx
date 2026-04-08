@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { PastActivity } from '../types'
+import { fmtDate } from '../lib/dateUtils'
 
 const STATUS_OPTIONS = ['Selesai','Sedang Berjalan','Dirancang','Dibatalkan']
 const badgeCls: Record<string, string> = {
@@ -117,7 +118,7 @@ export default function PastActivitiesPage() {
                       <span className={`badge ${badgeCls[a.status || ''] || 'badge-grey'}`} style={{ fontSize: '0.68rem' }}>{a.status || '—'}</span>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 12px', fontSize: 'clamp(0.72rem, 2.8vw, 0.8rem)', color: '#6b4c2a' }}>
-                      {a.date && <span>📅 {new Date(a.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' })}{a.time ? ` · ${a.time}` : ''}</span>}
+                      {a.date && <span>📅 {fmtDate(a.date)}{a.time ? ` · ${a.time}` : ''}</span>}
                       {a.place && <span>📍 {a.place}</span>}
                       {a.participants && <span>👥 {a.participants}</span>}
                       {a.cost && <span>💰 {a.cost}</span>}

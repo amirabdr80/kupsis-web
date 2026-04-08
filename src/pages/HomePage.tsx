@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
+import { fmtDate } from '../lib/dateUtils'
 
 function calcCountdown(dateStr: string) {
   const target = new Date(dateStr + 'T00:00:00')
@@ -15,10 +16,6 @@ function calcCountdown(dateStr: string) {
   return { days, hours, minutes, seconds, done: false }
 }
 
-function fmtDateLabel(dateStr: string) {
-  if (!dateStr) return '—'
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })
-}
 
 export default function HomePage() {
   const { loggedIn, isAdmin } = useAuth()
@@ -140,7 +137,7 @@ export default function HomePage() {
         <div className="card" style={{ borderTop: '4px solid #e8671a' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', margin: 0 }}>
-              <span>📝</span> Percubaan SPM — {fmtDateLabel(trialDate)}
+              <span>📝</span> Percubaan SPM — {fmtDate(trialDate)}
             </div>
             {isAdmin && (
               <button onClick={() => { setEditSpm(spmDate); setEditTrial(trialDate); setEditDatesModal(true) }}
@@ -161,14 +158,14 @@ export default function HomePage() {
               ))}
             </div>
           )}
-          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>Angkaan Percubaan SPM · {fmtDateLabel(trialDate)}</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>Angkaan Percubaan SPM · {fmtDate(trialDate)}</div>
         </div>
 
         {/* SPM Countdown */}
         <div className="card" style={{ borderTop: '4px solid #b34700' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', margin: 0 }}>
-              <span>⏳</span> SPM 2026 — {fmtDateLabel(spmDate)}
+              <span>⏳</span> SPM 2026 — {fmtDate(spmDate)}
             </div>
             {isAdmin && (
               <button onClick={() => { setEditSpm(spmDate); setEditTrial(trialDate); setEditDatesModal(true) }}
@@ -185,7 +182,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS · {fmtDateLabel(spmDate)}</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS · {fmtDate(spmDate)}</div>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { Plus, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { Donation } from '../types'
+import { fmtDate } from '../lib/dateUtils'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const KELAS = ['5 Juara', '5 Nekad', '5 Waja', '5 Fikir', '5 Rajin'] as const
@@ -19,10 +20,6 @@ const MONTH_DATES = [
 function fmtRM(n: number, dash = false) {
   if (dash && n === 0) return '—'
   return 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
-function fmtDate(d?: string) {
-  if (!d) return '—'
-  return new Date(d + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 function getExpenseKelas(donorName: string): KelasKey {
   for (const k of KELAS) if (donorName.includes(k)) return k
