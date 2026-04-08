@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 
 const SPM_DATE   = new Date('2026-11-09T00:00:00')
 const TRIAL_DATE = new Date('2026-07-13T00:00:00')   // SPM Trial – mid July 2026 (est.)
@@ -20,6 +21,7 @@ function getCountdown() { return calcCountdown(SPM_DATE) }
 function getTrialCountdown() { return calcCountdown(TRIAL_DATE) }
 
 export default function HomePage() {
+  const { loggedIn } = useAuth()
   const [countdown, setCountdown]      = useState(getCountdown())
   const [trialCountdown, setTrial]     = useState(getTrialCountdown())
   const [stats, setStats] = useState({ past: 0, future: 0, photos: 0, donations: 0, perbelanjaan: 0 })
@@ -38,11 +40,13 @@ export default function HomePage() {
         supabase.from('donations').select('amount, type, category'),
       ])
       const rows = donations.data || []
+      // Match DonationsPage: kutipan_bulanan + infaq masuk only (excludes kutipan_2025 info records, cikgu_alam, lebihan_sumbangan)
       const total = rows
-        .filter((d: { amount: number; type?: string; category?: string }) => d.type !== 'keluar' && d.category !== 'cikgu_alam')
+        .filter((d: { amount: number; type?: string; category?: string }) =>
+          (d.category === 'kutipan_bulanan' || d.category === 'infaq') && d.type === 'masuk')
         .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
       const belanja = rows
-        .filter((d: { amount: number; type?: string }) => d.type === 'keluar')
+        .filter((d: { amount: number; type?: string; category?: string }) => d.type === 'keluar' && d.category !== 'cikgu_alam')
         .reduce((s: number, d: { amount: number }) => s + Number(d.amount), 0)
       setStats({ past: past.count ?? 0, future: future.count ?? 0, photos: photos.count ?? 0, donations: total, perbelanjaan: belanja })
     }
@@ -169,42 +173,52 @@ export default function HomePage() {
         <div className="card">
           <div className="card-title"><span className="icon">💚</span> Dana SAA 2026</div>
 
-          {/* 3 stat boxes — all link to Dana SAA page */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 14 }}>
-            {[
-              { to: '/donations', bg: '#f0fdf4', bgHover: '#dcfce7', border: '#16a34a', label: '📥 Terkumpul', amount: fmtRM(stats.donations), sub: 'Bulanan + Infaq', color: '#15803d' },
-              { to: '/donations', bg: '#fef2f2', bgHover: '#fee2e2', border: '#dc2626', label: '📤 Belanja',    amount: fmtRM(stats.perbelanjaan), sub: 'Perbelanjaan', color: '#dc2626' },
-              { to: '/donations', bg: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2', bgHover: danaBaki >= 0 ? '#dcfce7' : '#fee2e2', border: danaBaki >= 0 ? '#16a34a' : '#dc2626', label: danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit', amount: fmtRM(Math.abs(danaBaki)), sub: 'Terkumpul − Belanja', color: danaBaki >= 0 ? '#15803d' : '#dc2626' },
-            ].map((item, idx) => (
-              <Link key={idx} to={item.to} style={{ textDecoration: 'none', minWidth: 0 }}>
-                <div style={{
-                  background: item.bg, borderRadius: 10,
-                  padding: 'clamp(7px, 2vw, 10px) clamp(6px, 2vw, 10px)',
-                  borderLeft: `3px solid ${item.border}`, cursor: 'pointer',
-                  transition: 'background 0.15s', height: '100%', boxSizing: 'border-box',
-                }}
-                  onMouseEnter={e => (e.currentTarget.style.background = item.bgHover)}
-                  onMouseLeave={e => (e.currentTarget.style.background = item.bg)}>
-                  <div style={{ fontSize: 'clamp(0.55rem, 2vw, 0.65rem)', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>
-                    {item.label}
-                  </div>
-                  <div style={{ fontSize: 'clamp(0.72rem, 3.2vw, 1rem)', fontWeight: 800, color: item.color, marginTop: 2, wordBreak: 'break-all', lineHeight: 1.2 }}>
-                    {item.amount}
-                  </div>
-                  <div style={{ fontSize: 'clamp(0.55rem, 1.8vw, 0.65rem)', color: '#9ca3af', marginTop: 2, lineHeight: 1.3 }}>
-                    {item.sub}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {loggedIn ? (
+            <>
+              {/* 3 stat boxes — all link to Dana SAA page */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 14 }}>
+                {[
+                  { to: '/donations', bg: '#f0fdf4', bgHover: '#dcfce7', border: '#16a34a', label: '📥 Terkumpul', amount: fmtRM(stats.donations), sub: 'Bulanan + Infaq', color: '#15803d' },
+                  { to: '/donations', bg: '#fef2f2', bgHover: '#fee2e2', border: '#dc2626', label: '📤 Belanja',    amount: fmtRM(stats.perbelanjaan), sub: 'Perbelanjaan', color: '#dc2626' },
+                  { to: '/donations', bg: danaBaki >= 0 ? '#f0fdf4' : '#fef2f2', bgHover: danaBaki >= 0 ? '#dcfce7' : '#fee2e2', border: danaBaki >= 0 ? '#16a34a' : '#dc2626', label: danaBaki >= 0 ? '💰 Baki' : '⚠️ Defisit', amount: fmtRM(Math.abs(danaBaki)), sub: 'Terkumpul − Belanja', color: danaBaki >= 0 ? '#15803d' : '#dc2626' },
+                ].map((item, idx) => (
+                  <Link key={idx} to={item.to} style={{ textDecoration: 'none', minWidth: 0 }}>
+                    <div style={{
+                      background: item.bg, borderRadius: 10,
+                      padding: 'clamp(7px, 2vw, 10px) clamp(6px, 2vw, 10px)',
+                      borderLeft: `3px solid ${item.border}`, cursor: 'pointer',
+                      transition: 'background 0.15s', height: '100%', boxSizing: 'border-box',
+                    }}
+                      onMouseEnter={e => (e.currentTarget.style.background = item.bgHover)}
+                      onMouseLeave={e => (e.currentTarget.style.background = item.bg)}>
+                      <div style={{ fontSize: 'clamp(0.55rem, 2vw, 0.65rem)', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>
+                        {item.label}
+                      </div>
+                      <div style={{ fontSize: 'clamp(0.72rem, 3.2vw, 1rem)', fontWeight: 800, color: item.color, marginTop: 2, wordBreak: 'break-all', lineHeight: 1.2 }}>
+                        {item.amount}
+                      </div>
+                      <div style={{ fontSize: 'clamp(0.55rem, 1.8vw, 0.65rem)', color: '#9ca3af', marginTop: 2, lineHeight: 1.3 }}>
+                        {item.sub}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
 
-          {/* Progress toward target */}
-          <div style={{ fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', marginBottom: 5, color: '#2c1a0e' }}>
-            <span style={{ color: '#8a6040' }}>Sasaran kutipan keseluruhan</span>
-            <span><strong>{donationPct.toFixed(1)}%</strong> daripada <strong>RM 100,000</strong></span>
-          </div>
-          <div className="progress-bar"><div className="progress-fill green" style={{ width: `${donationPct}%` }} /></div>
+              {/* Progress toward target */}
+              <div style={{ fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', marginBottom: 5, color: '#2c1a0e' }}>
+                <span style={{ color: '#8a6040' }}>Sasaran kutipan keseluruhan</span>
+                <span><strong>{donationPct.toFixed(1)}%</strong> daripada <strong>RM 100,000</strong></span>
+              </div>
+              <div className="progress-bar"><div className="progress-fill green" style={{ width: `${donationPct}%` }} /></div>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '18px 12px', color: '#9ca3af' }}>
+              <div style={{ fontSize: '1.8rem', marginBottom: 6 }}>🔒</div>
+              <div style={{ fontSize: '0.8rem', color: '#b34700', fontWeight: 600 }}>Log masuk untuk melihat maklumat kewangan</div>
+              <Link to="/login" style={{ display: 'inline-block', marginTop: 10, padding: '6px 16px', borderRadius: 8, background: '#b34700', color: '#fff', fontSize: '0.78rem', fontWeight: 700, textDecoration: 'none' }}>Log Masuk →</Link>
+            </div>
+          )}
 
           <Link to="/donations" className="btn-add mt-4 text-xs" style={{ display: 'inline-flex' }}>Lihat Dana SAA →</Link>
         </div>

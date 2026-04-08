@@ -92,6 +92,7 @@ export function useAuth() {
 
   return {
     session, loading,
+    loggedIn,
     isAdmin, isChampion, championSubjects, canGallery,
     canEditSubject,
     signIn, signOut,

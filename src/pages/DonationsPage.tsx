@@ -50,7 +50,7 @@ const inputStyle: React.CSSProperties = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function DonationsPage() {
-  const { isAdmin } = useAuth()
+  const { isAdmin, loggedIn } = useAuth()
   const [donations,    setDonations]    = useState<Donation[]>([])
   const [loading,      setLoading]      = useState(true)
   const [mainSection,  setMainSection]  = useState<'dana_saa' | 'cikgu_alam'>('dana_saa')
@@ -222,7 +222,7 @@ export default function DonationsPage() {
 
   if (loading) return <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af', fontSize: '1rem' }}>Memuatkan...</div>
 
-  if (!isAdmin) return (
+  if (!loggedIn) return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 'clamp(12px,4vw,24px)', textAlign: 'center' }}>
       <div style={{ marginBottom: 16 }}>
         <h1 style={{ fontSize: 'clamp(1.1rem,5vw,1.5rem)', fontWeight: 800, color: '#9a3412' }}>
@@ -236,8 +236,8 @@ export default function DonationsPage() {
         <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🔒</div>
         <div style={{ fontWeight: 700, color: '#9a3412', fontSize: '1rem', marginBottom: 8 }}>Akses Terhad</div>
         <div style={{ color: '#6b7280', fontSize: '0.85rem', lineHeight: 1.6 }}>
-          Maklumat kewangan hanya boleh dilihat oleh pentadbir KSIB.<br />
-          Sila hubungi pentadbir untuk maklumat lanjut.
+          Maklumat kewangan hanya boleh dilihat oleh ahli yang log masuk.<br />
+          Sila log masuk untuk melihat maklumat Dana SAA.
         </div>
       </div>
     </div>

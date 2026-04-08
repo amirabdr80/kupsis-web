@@ -108,6 +108,21 @@ const EMPTY: Partial<FutureActivity> = {
   status: 'Dirancang', subject: 'general',
 }
 
+const DAYS_MY = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu']
+
+function getRecurringDates(dayOfWeek: number, from: string, until: string): string[] {
+  if (!from || !until) return []
+  const dates: string[] = []
+  const cur = new Date(from + 'T00:00:00')
+  const end = new Date(until + 'T00:00:00')
+  while (cur.getDay() !== dayOfWeek) cur.setDate(cur.getDate() + 1)
+  while (cur <= end) {
+    dates.push(cur.toISOString().split('T')[0])
+    cur.setDate(cur.getDate() + 7)
+  }
+  return dates
+}
+
 export default function FutureActivitiesPage() {
   const { isAdmin, canEditSubject } = useAuth()
   const [activities, setActivities] = useState<FutureActivity[]>([])
@@ -115,6 +130,7 @@ export default function FutureActivitiesPage() {
   const [modal, setModal] = useState(false)
   const [editing, setEditing] = useState<Partial<FutureActivity>>(EMPTY)
   const [saving, setSaving] = useState(false)
+  const [recur, setRecur] = useState({ enabled: false, day: 6, from: '', until: '' })
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [uploadingPoster, setUploadingPoster] = useState(false)
   const posterInputRef = useRef<HTMLInputElement>(null)
@@ -151,11 +167,13 @@ export default function FutureActivitiesPage() {
 
   function openNew(subject = 'general') {
     setEditing({ ...EMPTY, subject })
+    setRecur({ enabled: false, day: 6, from: '', until: '' })
     setModal(true)
   }
 
   function openEdit(a: FutureActivity) {
     setEditing({ ...a })
+    setRecur({ enabled: false, day: 6, from: '', until: '' })
     setModal(true)
   }
 
@@ -163,7 +181,20 @@ export default function FutureActivitiesPage() {
     if (!editing.name?.trim()) return
     setSaving(true)
     if (editing.id) {
+      // Editing existing — no recurrence
       await supabase.from('future_activities').update(editing).eq('id', editing.id)
+    } else if (recur.enabled) {
+      // Recurring — insert one record per occurrence
+      const dates = getRecurringDates(recur.day, recur.from, recur.until)
+      if (dates.length === 0) { alert('Tiada tarikh dijana. Semak semula tarikh mula/akhir.'); setSaving(false); return }
+      const base = { ...editing }
+      delete base.id
+      const records = dates.map((d, i) => ({
+        ...base,
+        date: d,
+        sort_order: activities.length + i,
+      }))
+      await supabase.from('future_activities').insert(records)
     } else {
       await supabase.from('future_activities').insert({
         ...editing,
@@ -568,9 +599,53 @@ export default function FutureActivitiesPage() {
               </div>
             </div>
 
+            {/* ── Recurring section (new events only) ── */}
+            {!editing.id && (
+              <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 10, background: recur.enabled ? '#fffbeb' : '#f9fafb', border: `1px solid ${recur.enabled ? '#fcd34d' : '#e5e7eb'}`, transition: 'all 0.2s' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={recur.enabled}
+                    onChange={e => setRecur(r => ({ ...r, enabled: e.target.checked }))}
+                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#e8671a' }}
+                  />
+                  <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#b34700' }}>🔁 Aktiviti Berulang (Recurring)</span>
+                </label>
+
+                {recur.enabled && (
+                  <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div style={{ gridColumn: '1/-1' }}>
+                      <label className="label">Hari Pengulangan</label>
+                      <select
+                        className="input"
+                        value={recur.day}
+                        onChange={e => setRecur(r => ({ ...r, day: Number(e.target.value) }))}
+                      >
+                        {DAYS_MY.map((d, i) => <option key={i} value={i}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Bermula</label>
+                      <input type="date" className="input" value={recur.from} onChange={e => setRecur(r => ({ ...r, from: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="label">Sehingga</label>
+                      <input type="date" className="input" value={recur.until} onChange={e => setRecur(r => ({ ...r, until: e.target.value }))} />
+                    </div>
+                    {recur.from && recur.until && (
+                      <div style={{ gridColumn: '1/-1', background: '#fef3c7', borderRadius: 8, padding: '8px 12px', fontSize: '0.8rem', color: '#92400e' }}>
+                        📅 Akan mencipta <strong>{getRecurringDates(recur.day, recur.from, recur.until).length}</strong> aktiviti
+                        (setiap <strong>{DAYS_MY[recur.day]}</strong> dari {recur.from} hingga {recur.until})
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
               <button onClick={save} className="btn-primary" style={{ flex: 1 }} disabled={saving}>
-                {saving ? 'Menyimpan...' : 'Simpan'}
+                {saving ? 'Menyimpan...' : recur.enabled ? `Simpan (${getRecurringDates(recur.day, recur.from, recur.until).length} aktiviti)` : 'Simpan'}
               </button>
               <button onClick={() => setModal(false)} className="btn-secondary">Batal</button>
             </div>
