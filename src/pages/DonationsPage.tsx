@@ -222,6 +222,27 @@ export default function DonationsPage() {
 
   if (loading) return <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af', fontSize: '1rem' }}>Memuatkan...</div>
 
+  if (!isAdmin) return (
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: 'clamp(12px,4vw,24px)', textAlign: 'center' }}>
+      <div style={{ marginBottom: 16 }}>
+        <h1 style={{ fontSize: 'clamp(1.1rem,5vw,1.5rem)', fontWeight: 800, color: '#9a3412' }}>
+          💚 Dana & Kutipan KSIB SAA
+        </h1>
+        <p style={{ color: '#9ca3af', marginTop: 4, fontSize: 'clamp(0.7rem,3vw,0.875rem)' }}>
+          Pengurusan kewangan Batch Salahuddin Al-Ayubi · SPM 2026
+        </p>
+      </div>
+      <div className="card" style={{ padding: '2.5rem 2rem', borderLeft: '4px solid #fed7aa' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🔒</div>
+        <div style={{ fontWeight: 700, color: '#9a3412', fontSize: '1rem', marginBottom: 8 }}>Akses Terhad</div>
+        <div style={{ color: '#6b7280', fontSize: '0.85rem', lineHeight: 1.6 }}>
+          Maklumat kewangan hanya boleh dilihat oleh pentadbir KSIB.<br />
+          Sila hubungi pentadbir untuk maklumat lanjut.
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(12px,4vw,24px)' }}>
 
