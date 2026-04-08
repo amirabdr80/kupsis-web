@@ -170,6 +170,12 @@ export default function HomePage() {
             <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', margin: 0 }}>
               <span>⏳</span> SPM 2026 — {fmtDateLabel(spmDate)}
             </div>
+            {isAdmin && (
+              <button onClick={() => { setEditSpm(spmDate); setEditTrial(trialDate); setEditDatesModal(true) }}
+                style={{ background: 'none', border: '1px solid #fed7aa', borderRadius: 6, padding: '3px 8px', fontSize: '0.68rem', color: '#b34700', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                ✏️ Edit Tarikh
+              </button>
+            )}
           </div>
           <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
             {[{ num: countdown.days, lbl: 'Hari' }, { num: countdown.hours, lbl: 'Jam' }, { num: countdown.minutes, lbl: 'Minit' }, { num: countdown.seconds, lbl: 'Saat' }].map(b => (
