@@ -325,6 +325,14 @@ export default function CalendarPage() {
                   {a.place      && <div className="text-xs text-gray-500">📍 {a.place}</div>}
                   {a.organiser  && <div className="text-xs text-gray-500">🏢 {a.organiser}</div>}
                   {a.description && <div className="text-xs text-gray-500 mt-1 border-t border-border pt-1">{a.description}</div>}
+                  {a.poster_url && (
+                    <img
+                      src={a.poster_url}
+                      alt={a.name}
+                      className="w-full rounded-md mt-2 object-cover"
+                      style={{ maxHeight: 160 }}
+                    />
+                  )}
                 </div>
               ))}
             </div>

@@ -11,3 +11,8 @@ insert_*.mjs
 migrate_*.mjs
 invite_*.mjs
 update_*.mjs
+anonymise_*.mjs
+check_*.mjs
+consolidate_*.mjs
+supabase/photo_seeds/
+supabase/seed_*.sql

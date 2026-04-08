@@ -88,10 +88,11 @@ export default function DonationsPage() {
   }
 
   // ── Derived data ──────────────────────────────────────────────────────────
-  const kutipanRecs = donations.filter(d => d.category === 'kutipan_bulanan' && d.type === 'masuk')
-  const belanjaRecs = donations.filter(d => d.type === 'keluar')
-  const infaqRecs   = donations.filter(d => d.category === 'infaq'           && d.type === 'masuk')
-  const cikguRecs   = donations.filter(d => d.category === 'cikgu_alam')
+  const kutipanRecs    = donations.filter(d => d.category === 'kutipan_bulanan' && d.type === 'masuk')
+  const kutipan2025Recs = donations.filter(d => d.category === 'kutipan_2025')
+  const belanjaRecs    = donations.filter(d => d.type === 'keluar')
+  const infaqRecs      = donations.filter(d => d.category === 'infaq'           && d.type === 'masuk')
+  const cikguRecs      = donations.filter(d => d.category === 'cikgu_alam')
 
   const sum = (rows: Donation[]) => rows.reduce((s, d) => s + Number(d.amount), 0)
 
@@ -111,6 +112,15 @@ export default function DonationsPage() {
   const totalCF     = KELAS.reduce((s, k) => s + kelasData[k].cf, 0)
   const totalMonths = MONTHS.map((_, i) => KELAS.reduce((s, k) => s + kelasData[k].months[i], 0))
   const grandTotal  = KELAS.reduce((s, k) => s + kelasData[k].total, 0)
+
+  // Kutipan 2025 per kelas (info records, not included in financial totals)
+  function getKutipan2025(kelas: string): number {
+    return kutipan2025Recs
+      .filter(d => (d.donor_name || '').includes(kelas))
+      .reduce((s, d) => s + Number(d.amount), 0)
+  }
+  const kutipan2025Data  = Object.fromEntries(KELAS.map(k => [k, getKutipan2025(k)]))
+  const totalKutipan2025 = KELAS.reduce((s, k) => s + kutipan2025Data[k], 0)
 
   const totalMasuk = sum(kutipanRecs) + sum(infaqRecs)
   const totalKeluar = sum(belanjaRecs)
@@ -301,6 +311,7 @@ export default function DonationsPage() {
                     <thead>
                       <tr style={{ background: 'linear-gradient(135deg,#b34700,#e8671a)', color: '#fff' }}>
                         <th style={{ ...thGrid, textAlign: 'left', minWidth: 80, paddingLeft: 12 }}>Kelas</th>
+                        <th style={{ ...thGrid, background: 'rgba(109,40,217,0.35)', minWidth: 80 }}>Kutipan 2025</th>
                         <th style={{ ...thGrid, background: 'rgba(0,0,0,0.18)', minWidth: 72 }}>C/F 2025</th>
                         {MONTHS.map(m => <th key={m} style={{ ...thGrid, minWidth: 52 }}>{m}</th>)}
                         <th style={{ ...thGrid, background: 'rgba(0,0,0,0.18)', minWidth: 80 }}>Jumlah</th>
@@ -313,6 +324,9 @@ export default function DonationsPage() {
                         return (
                           <tr key={kelas} style={{ background: ri % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f3f4f6' }}>
                             <td style={{ ...tdGrid, fontWeight: 700, color: '#b34700', paddingLeft: 12 }}>{kelas}</td>
+                            <td style={{ ...tdGrid, textAlign: 'right', fontWeight: 600, color: kutipan2025Data[kelas] > 0 ? '#6d28d9' : '#d1d5db', background: '#faf5ff' }}>
+                              {kutipan2025Data[kelas] > 0 ? numFmt(kutipan2025Data[kelas]) : '—'}
+                            </td>
                             <td style={{ ...tdGrid, textAlign: 'right', fontWeight: 600, color: d.cf > 0 ? '#1d4ed8' : '#d1d5db', background: '#f0f9ff' }}>
                               {numFmt(d.cf)}
                             </td>
@@ -338,6 +352,9 @@ export default function DonationsPage() {
                       {/* Totals row */}
                       <tr style={{ background: '#fff7ed', borderTop: '2px solid #fed7aa', fontWeight: 800 }}>
                         <td style={{ ...tdGrid, color: '#9a3412', fontWeight: 800, paddingLeft: 12 }}>JUMLAH</td>
+                        <td style={{ ...tdGrid, textAlign: 'right', color: '#6d28d9', background: '#ede9fe', fontWeight: 800 }}>
+                          {numFmt(totalKutipan2025)}
+                        </td>
                         <td style={{ ...tdGrid, textAlign: 'right', color: '#1d4ed8', background: '#e0f2fe' }}>
                           {numFmt(totalCF)}
                         </td>
