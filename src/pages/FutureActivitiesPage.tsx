@@ -399,7 +399,9 @@ export default function FutureActivitiesPage() {
 
                           {/* Detail chips */}
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 12px', fontSize: 'clamp(0.72rem,2.2vw,0.82rem)', color: '#6b7280' }}>
-                            {a.date        && <span>📅 {a.date}</span>}
+                            {a.date && <span>📅 {/^\d{4}-\d{2}-\d{2}$/.test(a.date)
+                              ? new Date(a.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })
+                              : a.date}</span>}
                             {a.time        && <span>⏰ {a.time}</span>}
                             {a.place       && <span>📍 {a.place}</span>}
                             {a.participants && <span>👥 {a.participants}</span>}
@@ -493,12 +495,12 @@ export default function FutureActivitiesPage() {
 
               {/* Date */}
               <div style={{ gridColumn: '1/-1' }}>
-                <label className="label">Tarikh (teks bebas: "April 2026" atau "2026-04-01")</label>
+                <label className="label">Tarikh <span style={{ color: '#9ca3af', fontWeight: 400 }}>(pilih tarikh supaya muncul dalam Kalendar)</span></label>
                 <input
+                  type="date"
                   className="input"
                   value={editing.date || ''}
                   onChange={e => setEditing(p => ({ ...p, date: e.target.value }))}
-                  placeholder="cth: April – Oktober 2026"
                 />
               </div>
 
