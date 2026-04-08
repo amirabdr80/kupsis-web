@@ -286,7 +286,7 @@ export default function FutureActivitiesPage() {
                   <div style={{ marginTop: 4, display: 'flex', flexWrap: 'wrap', gap: '4px 12px' }}>
                     {section.champions.map(c => (
                       <span key={c} style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.75rem' }}>
-                        👤 {c}
+                        👤 <span style={{ opacity: 0.7, fontWeight: 400 }}>Champion:</span> <span style={{ fontWeight: 600 }}>{c}</span>
                       </span>
                     ))}
                   </div>

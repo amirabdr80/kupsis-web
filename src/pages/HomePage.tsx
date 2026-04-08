@@ -3,10 +3,8 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 
-const SPM_DATE   = new Date('2026-11-09T00:00:00')
-const TRIAL_DATE = new Date('2026-07-13T00:00:00')   // SPM Trial – mid July 2026 (est.)
-
-function calcCountdown(target: Date) {
+function calcCountdown(dateStr: string) {
+  const target = new Date(dateStr + 'T00:00:00')
   const now  = new Date()
   const diff = target.getTime() - now.getTime()
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true }
@@ -17,19 +15,61 @@ function calcCountdown(target: Date) {
   return { days, hours, minutes, seconds, done: false }
 }
 
-function getCountdown() { return calcCountdown(SPM_DATE) }
-function getTrialCountdown() { return calcCountdown(TRIAL_DATE) }
+function fmtDateLabel(dateStr: string) {
+  if (!dateStr) return '—'
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })
+}
 
 export default function HomePage() {
-  const { loggedIn } = useAuth()
-  const [countdown, setCountdown]      = useState(getCountdown())
-  const [trialCountdown, setTrial]     = useState(getTrialCountdown())
+  const { loggedIn, isAdmin } = useAuth()
+
+  const [spmDate,   setSpmDate]   = useState('2026-11-09')
+  const [trialDate, setTrialDate] = useState('2026-07-13')
+  const [countdown,      setCountdown] = useState(calcCountdown('2026-11-09'))
+  const [trialCountdown, setTrial]     = useState(calcCountdown('2026-07-13'))
   const [stats, setStats] = useState({ past: 0, future: 0, photos: 0, donations: 0, perbelanjaan: 0 })
 
+  // Edit dates modal
+  const [editDatesModal, setEditDatesModal] = useState(false)
+  const [editSpm,   setEditSpm]   = useState('')
+  const [editTrial, setEditTrial] = useState('')
+  const [savingDates, setSavingDates] = useState(false)
+
+  // Load dates from site_settings
   useEffect(() => {
-    const t = setInterval(() => { setCountdown(getCountdown()); setTrial(getTrialCountdown()) }, 1000)
-    return () => clearInterval(t)
+    async function loadSettings() {
+      const { data } = await supabase.from('site_settings').select('key, value')
+      if (data) {
+        const spm   = data.find((r: {key:string,value:string}) => r.key === 'spm_date')?.value
+        const trial = data.find((r: {key:string,value:string}) => r.key === 'trial_date')?.value
+        if (spm)   setSpmDate(spm)
+        if (trial) setTrialDate(trial)
+      }
+    }
+    loadSettings()
   }, [])
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCountdown(calcCountdown(spmDate))
+      setTrial(calcCountdown(trialDate))
+    }, 1000)
+    setCountdown(calcCountdown(spmDate))
+    setTrial(calcCountdown(trialDate))
+    return () => clearInterval(t)
+  }, [spmDate, trialDate])
+
+  async function saveDates() {
+    setSavingDates(true)
+    await supabase.from('site_settings').upsert([
+      { key: 'spm_date',   value: editSpm },
+      { key: 'trial_date', value: editTrial },
+    ], { onConflict: 'key' })
+    setSpmDate(editSpm)
+    setTrialDate(editTrial)
+    setSavingDates(false)
+    setEditDatesModal(false)
+  }
 
   useEffect(() => {
     async function load() {
@@ -57,20 +97,6 @@ export default function HomePage() {
   const danaBaki    = stats.donations - stats.perbelanjaan
   const donationPct = Math.min(100, (stats.donations / TARGET_DONATIONS) * 100)
   const fmtRM = (n: number) => 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-
-  const countdownBoxes = [
-    { num: countdown.days,    lbl: 'Hari' },
-    { num: countdown.hours,   lbl: 'Jam' },
-    { num: countdown.minutes, lbl: 'Minit' },
-    { num: countdown.seconds, lbl: 'Saat' },
-  ]
-
-  const trialBoxes = [
-    { num: trialCountdown.days,    lbl: 'Hari' },
-    { num: trialCountdown.hours,   lbl: 'Jam' },
-    { num: trialCountdown.minutes, lbl: 'Minit' },
-    { num: trialCountdown.seconds, lbl: 'Saat' },
-  ]
 
   return (
     <div style={{ maxWidth: 1300, margin: '0 auto', padding: 'clamp(14px, 4vw, 28px) clamp(12px, 4vw, 24px)' }}>
@@ -112,14 +138,22 @@ export default function HomePage() {
 
         {/* SPM Trial Countdown */}
         <div className="card" style={{ borderTop: '4px solid #e8671a' }}>
-          <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)' }}>
-            <span>📝</span> Percubaan SPM — Julai 2026
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', margin: 0 }}>
+              <span>📝</span> Percubaan SPM — {fmtDateLabel(trialDate)}
+            </div>
+            {isAdmin && (
+              <button onClick={() => { setEditSpm(spmDate); setEditTrial(trialDate); setEditDatesModal(true) }}
+                style={{ background: 'none', border: '1px solid #fed7aa', borderRadius: 6, padding: '3px 8px', fontSize: '0.68rem', color: '#b34700', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                ✏️ Edit Tarikh
+              </button>
+            )}
           </div>
           {trialCountdown.done ? (
             <div style={{ textAlign: 'center', color: '#1e8449', fontWeight: 700, fontSize: '1rem', padding: '8px 0' }}>✅ Peperiksaan Percubaan Telah Berlangsung</div>
           ) : (
             <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-              {trialBoxes.map(b => (
+              {[{ num: trialCountdown.days, lbl: 'Hari' }, { num: trialCountdown.hours, lbl: 'Jam' }, { num: trialCountdown.minutes, lbl: 'Minit' }, { num: trialCountdown.seconds, lbl: 'Saat' }].map(b => (
                 <div key={b.lbl} style={{ background: '#e8671a', color: 'white', borderRadius: 10, padding: 'clamp(8px,2vw,14px) clamp(10px,3vw,18px)', textAlign: 'center', flex: 1 }}>
                   <div style={{ fontSize: 'clamp(1.2rem, 5vw, 1.9rem)', fontWeight: 800, lineHeight: 1 }}>{String(b.num).padStart(2, '0')}</div>
                   <div style={{ fontSize: 'clamp(0.58rem, 2vw, 0.68rem)', opacity: 0.85, textTransform: 'uppercase', marginTop: 3 }}>{b.lbl}</div>
@@ -127,25 +161,60 @@ export default function HomePage() {
               ))}
             </div>
           )}
-          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>Angkaan Percubaan SPM · Julai 2026</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>Angkaan Percubaan SPM · {fmtDateLabel(trialDate)}</div>
         </div>
 
         {/* SPM Countdown */}
         <div className="card" style={{ borderTop: '4px solid #b34700' }}>
-          <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)' }}>
-            <span>⏳</span> SPM 2026 — 9 November 2026
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <div className="card-title" style={{ fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', margin: 0 }}>
+              <span>⏳</span> SPM 2026 — {fmtDateLabel(spmDate)}
+            </div>
           </div>
           <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-            {countdownBoxes.map(b => (
+            {[{ num: countdown.days, lbl: 'Hari' }, { num: countdown.hours, lbl: 'Jam' }, { num: countdown.minutes, lbl: 'Minit' }, { num: countdown.seconds, lbl: 'Saat' }].map(b => (
               <div key={b.lbl} style={{ background: '#b34700', color: 'white', borderRadius: 10, padding: 'clamp(8px,2vw,14px) clamp(10px,3vw,18px)', textAlign: 'center', flex: 1 }}>
                 <div style={{ fontSize: 'clamp(1.2rem, 5vw, 1.9rem)', fontWeight: 800, lineHeight: 1 }}>{String(b.num).padStart(2, '0')}</div>
                 <div style={{ fontSize: 'clamp(0.58rem, 2vw, 0.68rem)', opacity: 0.85, textTransform: 'uppercase', marginTop: 3 }}>{b.lbl}</div>
               </div>
             ))}
           </div>
-          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS</div>
+          <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS · {fmtDateLabel(spmDate)}</div>
         </div>
       </div>
+
+      {/* Edit Dates Modal */}
+      {editDatesModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: 16 }}
+          onClick={() => setEditDatesModal(false)}>
+          <div style={{ background: 'white', borderRadius: 16, padding: 24, width: '100%', maxWidth: 380 }}
+            onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontWeight: 800, color: '#9a3412', fontSize: '1rem', marginBottom: 16 }}>✏️ Edit Tarikh Peperiksaan</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#6b7280', marginBottom: 4 }}>📝 Tarikh Percubaan SPM</label>
+                <input type="date" value={editTrial} onChange={e => setEditTrial(e.target.value)}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.9rem', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#6b7280', marginBottom: 4 }}>⏳ Tarikh SPM 2026</label>
+                <input type="date" value={editSpm} onChange={e => setEditSpm(e.target.value)}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.9rem', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
+              <button onClick={saveDates} disabled={savingDates}
+                style={{ flex: 1, padding: '9px 0', background: '#b34700', color: 'white', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: '0.88rem' }}>
+                {savingDates ? 'Menyimpan...' : 'Simpan'}
+              </button>
+              <button onClick={() => setEditDatesModal(false)}
+                style={{ padding: '9px 16px', background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem' }}>
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stat boxes */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
