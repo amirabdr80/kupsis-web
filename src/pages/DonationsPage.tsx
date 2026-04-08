@@ -229,7 +229,7 @@ export default function DonationsPage() {
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {[
           { key: 'dana_saa',   label: '💚 Dana SAA',           sub: 'Kutipan Bulanan · Perbelanjaan', color: '#16a34a', bdr: '#bbf7d0', shadow: 'rgba(22,163,74,0.3)' },
-          { key: 'cikgu_alam', label: '📚 Tuition Cikgu Alam', sub: 'Bayaran tuisyen Math & Add Math', color: '#7c3aed', bdr: '#ede9fe', shadow: 'rgba(124,58,237,0.3)' },
+          ...(isAdmin ? [{ key: 'cikgu_alam', label: '📚 Tuition Cikgu Alam', sub: 'Bayaran tuisyen Math & Add Math', color: '#7c3aed', bdr: '#ede9fe', shadow: 'rgba(124,58,237,0.3)' }] : []),
         ].map(s => {
           const active = mainSection === s.key
           return (
@@ -494,8 +494,8 @@ export default function DonationsPage() {
         </>
       )}
 
-      {/* ══════════ CIKGU ALAM ══════════ */}
-      {mainSection === 'cikgu_alam' && (
+      {/* ══════════ CIKGU ALAM — admin only ══════════ */}
+      {isAdmin && mainSection === 'cikgu_alam' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
             <div className="card" style={{ borderLeft: '4px solid #a78bfa', padding: '12px 14px' }}>
