@@ -9,6 +9,7 @@ import GalleryPage from './pages/GalleryPage'
 import DonationsPage from './pages/DonationsPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
+import KSIBPage from './pages/KSIBPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth()
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/upcoming"   element={<FutureActivitiesPage />} />
           <Route path="/gallery"    element={<GalleryPage />} />
           <Route path="/donations"  element={<DonationsPage />} />
+          <Route path="/ksib"       element={<KSIBPage />} />
           <Route path="/login"      element={<LoginPage />} />
           <Route path="/admin"      element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>
