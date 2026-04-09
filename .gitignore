@@ -14,5 +14,9 @@ update_*.mjs
 anonymise_*.mjs
 check_*.mjs
 consolidate_*.mjs
+attach_*.mjs
+list_*.mjs
+reset_*.mjs
+seed_*.mjs
 supabase/photo_seeds/
 supabase/seed_*.sql

@@ -17,6 +17,8 @@ function calcCountdown(dateStr: string) {
 }
 
 
+type Poster = { id: string; title: string | null; image_url: string }
+
 export default function HomePage() {
   const { loggedIn, isAdmin } = useAuth()
 
@@ -31,6 +33,61 @@ export default function HomePage() {
   const [editSpm,   setEditSpm]   = useState('')
   const [editTrial, setEditTrial] = useState('')
   const [savingDates, setSavingDates] = useState(false)
+
+  // Poster carousel
+  const [posters,        setPosters]        = useState<Poster[]>([])
+  const [posterIdx,      setPosterIdx]      = useState(0)
+  const [uploadingPoster, setUploadingPoster] = useState(false)
+
+  // Load posters
+  useEffect(() => {
+    async function loadPosters() {
+      const { data } = await supabase
+        .from('homepage_posters')
+        .select('id, title, image_url')
+        .eq('is_active', true)
+        .order('sort_order')
+      if (data) setPosters(data)
+    }
+    loadPosters()
+  }, [])
+
+  // Auto-rotate posters every 5 seconds
+  useEffect(() => {
+    if (posters.length <= 1) return
+    const t = setInterval(() => setPosterIdx(i => (i + 1) % posters.length), 5000)
+    return () => clearInterval(t)
+  }, [posters.length])
+
+  async function uploadPoster(file: File) {
+    setUploadingPoster(true)
+    const ext = file.name.split('.').pop()
+    const fileName = `homepage-poster-${Date.now()}.${ext}`
+    const { error: upErr } = await supabase.storage
+      .from('activity-posters')
+      .upload(fileName, file, { contentType: file.type, upsert: false })
+    if (upErr) { alert('Upload gagal: ' + upErr.message); setUploadingPoster(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('activity-posters').getPublicUrl(fileName)
+    await supabase.from('homepage_posters').insert({
+      image_url: publicUrl,
+      title: file.name.replace(/\.[^.]+$/, ''),
+      is_active: true,
+      sort_order: posters.length,
+    })
+    const { data } = await supabase.from('homepage_posters').select('id, title, image_url').eq('is_active', true).order('sort_order')
+    if (data) { setPosters(data); setPosterIdx(data.length - 1) }
+    setUploadingPoster(false)
+  }
+
+  async function deletePoster(id: string) {
+    if (!confirm('Padam poster ini?')) return
+    await supabase.from('homepage_posters').delete().eq('id', id)
+    setPosters(p => {
+      const next = p.filter(x => x.id !== id)
+      setPosterIdx(i => Math.min(i, Math.max(0, next.length - 1)))
+      return next
+    })
+  }
 
   // Load dates from site_settings
   useEffect(() => {
@@ -129,6 +186,76 @@ export default function HomePage() {
         <blockquote>"Sesungguhnya bersama kesusahan itu ada kemudahan. Maka apabila engkau telah selesai (dari sesuatu urusan), tetaplah bekerja keras."</blockquote>
         <cite>— Al-Inshirah 94:6-7 · Semoga ALLAH permudahkan perjalanan SPM 2026 kita</cite>
       </div>
+
+      {/* ── Poster Carousel ── */}
+      {(posters.length > 0 || loggedIn) && (
+        <div style={{ marginBottom: 20, borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', background: '#1a1a1a' }}>
+          {posters.length > 0 ? (
+            <>
+              {/* Image area */}
+              <div style={{ position: 'relative', width: '100%', maxHeight: 520, display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#111', overflow: 'hidden' }}>
+                <img
+                  key={posters[posterIdx]?.id}
+                  src={posters[posterIdx]?.image_url}
+                  alt={posters[posterIdx]?.title || 'Poster'}
+                  style={{ width: '100%', maxHeight: 520, objectFit: 'contain', display: 'block', transition: 'opacity 0.4s ease' }}
+                />
+                {/* Left arrow */}
+                {posters.length > 1 && (
+                  <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
+                    style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 38, height: 38, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>‹</button>
+                )}
+                {/* Right arrow */}
+                {posters.length > 1 && (
+                  <button onClick={() => setPosterIdx(i => (i + 1) % posters.length)}
+                    style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 38, height: 38, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>›</button>
+                )}
+                {/* Dots */}
+                {posters.length > 1 && (
+                  <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6, zIndex: 2 }}>
+                    {posters.map((_, i) => (
+                      <button key={i} onClick={() => setPosterIdx(i)}
+                        style={{ width: i === posterIdx ? 20 : 8, height: 8, borderRadius: 4, border: 'none', background: i === posterIdx ? '#f97316' : 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, transition: 'width 0.3s, background 0.3s' }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Controls bar for logged-in users */}
+              {loggedIn && (
+                <div style={{ background: 'white', padding: '8px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, borderTop: '1px solid #f3f4f6' }}>
+                  <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
+                    {posterIdx + 1} / {posters.length} · {posters[posterIdx]?.title || 'Poster'}
+                  </span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => deletePoster(posters[posterIdx].id)}
+                      style={{ padding: '4px 12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 6, fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer' }}>
+                      🗑️ Padam
+                    </button>
+                    <label style={{ padding: '4px 12px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', borderRadius: 6, fontSize: '0.72rem', fontWeight: 600, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
+                      {uploadingPoster ? '⏳ Mengupload...' : '📤 Tambah Poster'}
+                      <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
+                        onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
+                    </label>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Empty state — only visible to logged-in users */
+            <div style={{ padding: '28px 20px', background: '#fff7ed', borderRadius: 14, textAlign: 'center', border: '2px dashed #fed7aa' }}>
+              <div style={{ fontSize: '2rem', marginBottom: 6 }}>🖼️</div>
+              <div style={{ fontSize: '0.85rem', color: '#9a3412', fontWeight: 600, marginBottom: 4 }}>Tiada poster lagi</div>
+              <div style={{ fontSize: '0.75rem', color: '#c2410c', marginBottom: 12 }}>Upload poster pertama untuk dipaparkan di sini</div>
+              <label style={{ padding: '8px 20px', background: '#b34700', color: 'white', borderRadius: 8, fontSize: '0.8rem', fontWeight: 700, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
+                {uploadingPoster ? '⏳ Mengupload...' : '📤 Upload Poster'}
+                <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
+                  onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
+              </label>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Countdowns side by side */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 16 }}>
