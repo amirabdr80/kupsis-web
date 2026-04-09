@@ -243,9 +243,12 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Poster Carousel (2-up, below countdowns) ── */}
+      {/* ── Poster Carousel + Stat Boxes side by side ── */}
+      <div style={{ display: 'flex', gap: 14, marginBottom: 20, alignItems: 'flex-start' }}>
+
+      {/* Left: Poster Carousel */}
       {(posters.length > 0 || loggedIn) && (
-        <div style={{ marginBottom: 20, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden', maxWidth: 260, margin: '0 auto 20px' }}>
+        <div style={{ flexShrink: 0, width: 260, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
           {posters.length > 0 ? (
             <>
               {/* 2-poster row with prev/next arrows */}
@@ -312,6 +315,28 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* Right: Stat boxes stacked vertically */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="stat-box">
+          <div className="stat-num">{countdown.days}</div>
+          <div className="stat-label">⏳ Hari Sebelum SPM</div>
+        </div>
+        <div className="stat-box green">
+          <div className="stat-num">{stats.past}</div>
+          <div className="stat-label">✅ Aktiviti Selesai</div>
+        </div>
+        <div className="stat-box orange">
+          <div className="stat-num">{stats.future}</div>
+          <div className="stat-label">🔮 Aktiviti Akan Datang</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-num">{stats.photos}</div>
+          <div className="stat-label">📷 Album Foto</div>
+        </div>
+      </div>
+
+      </div>{/* end flex row */}
+
       {/* Edit Dates Modal */}
       {editDatesModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: 16 }}
@@ -345,25 +370,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Stat boxes */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
-        <div className="stat-box">
-          <div className="stat-num">{countdown.days}</div>
-          <div className="stat-label">⏳ Hari Sebelum SPM</div>
-        </div>
-        <div className="stat-box green">
-          <div className="stat-num">{stats.past}</div>
-          <div className="stat-label">✅ Aktiviti Selesai</div>
-        </div>
-        <div className="stat-box orange">
-          <div className="stat-num">{stats.future}</div>
-          <div className="stat-label">🔮 Aktiviti Akan Datang</div>
-        </div>
-        <div className="stat-box">
-          <div className="stat-num">{stats.photos}</div>
-          <div className="stat-label">📷 Album Foto</div>
-        </div>
-      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
 
