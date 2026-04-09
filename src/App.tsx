@@ -10,6 +10,7 @@ import DonationsPage from './pages/DonationsPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 import KSIBPage from './pages/KSIBPage'
+import BIJAKPage from './pages/BIJAKPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth()
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/gallery"    element={<GalleryPage />} />
           <Route path="/donations"  element={<DonationsPage />} />
           <Route path="/ksib"       element={<KSIBPage />} />
+          <Route path="/bijak"      element={<BIJAKPage />} />
           <Route path="/login"      element={<LoginPage />} />
           <Route path="/admin"      element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         </Routes>

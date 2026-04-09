@@ -10,6 +10,7 @@ const tabs = [
   { to: '/gallery',    label: '📷 Galeri Foto' },
   { to: '/donations',  label: '💚 Dana SAA' },
   { to: '/ksib',       label: '👥 KSIB' },
+  { to: '/bijak',      label: '⭐ BIJAK' },
 ]
 
 
