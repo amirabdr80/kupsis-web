@@ -187,78 +187,6 @@ export default function HomePage() {
         <cite>— Al-Inshirah 94:6-7 · Semoga ALLAH permudahkan perjalanan SPM 2026 kita</cite>
       </div>
 
-      {/* ── Poster Carousel ── */}
-      {(posters.length > 0 || loggedIn) && (
-        <div style={{ marginBottom: 20, borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', background: '#1a1a1a' }}>
-          {posters.length > 0 ? (
-            <>
-              {/* Image area — centered, max 340px wide, portrait ratio preserved */}
-              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#111', padding: '12px 36px' }}>
-                <div style={{ position: 'relative', width: '100%', maxWidth: 340 }}>
-                <img
-                  key={posters[posterIdx]?.id}
-                  src={posters[posterIdx]?.image_url}
-                  alt={posters[posterIdx]?.title || 'Poster'}
-                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8, transition: 'opacity 0.4s ease' }}
-                />
-                {/* Left arrow */}
-                {posters.length > 1 && (
-                  <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
-                    style={{ position: 'absolute', left: -18, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>‹</button>
-                )}
-                {/* Right arrow */}
-                {posters.length > 1 && (
-                  <button onClick={() => setPosterIdx(i => (i + 1) % posters.length)}
-                    style={{ position: 'absolute', right: -18, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>›</button>
-                )}
-                {/* Dots */}
-                {posters.length > 1 && (
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8 }}>
-                    {posters.map((_, i) => (
-                      <button key={i} onClick={() => setPosterIdx(i)}
-                        style={{ width: i === posterIdx ? 20 : 8, height: 8, borderRadius: 4, border: 'none', background: i === posterIdx ? '#f97316' : 'rgba(255,255,255,0.35)', cursor: 'pointer', padding: 0, transition: 'width 0.3s, background 0.3s' }} />
-                    ))}
-                  </div>
-                )}
-                </div>{/* end inner wrapper */}
-              </div>
-
-              {/* Controls bar for logged-in users */}
-              {loggedIn && (
-                <div style={{ background: 'white', padding: '8px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, borderTop: '1px solid #f3f4f6' }}>
-                  <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
-                    {posterIdx + 1} / {posters.length} · {posters[posterIdx]?.title || 'Poster'}
-                  </span>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => deletePoster(posters[posterIdx].id)}
-                      style={{ padding: '4px 12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 6, fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer' }}>
-                      🗑️ Padam
-                    </button>
-                    <label style={{ padding: '4px 12px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', borderRadius: 6, fontSize: '0.72rem', fontWeight: 600, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
-                      {uploadingPoster ? '⏳ Mengupload...' : '📤 Tambah Poster'}
-                      <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
-                        onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
-                    </label>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            /* Empty state — only visible to logged-in users */
-            <div style={{ padding: '28px 20px', background: '#fff7ed', borderRadius: 14, textAlign: 'center', border: '2px dashed #fed7aa' }}>
-              <div style={{ fontSize: '2rem', marginBottom: 6 }}>🖼️</div>
-              <div style={{ fontSize: '0.85rem', color: '#9a3412', fontWeight: 600, marginBottom: 4 }}>Tiada poster lagi</div>
-              <div style={{ fontSize: '0.75rem', color: '#c2410c', marginBottom: 12 }}>Upload poster pertama untuk dipaparkan di sini</div>
-              <label style={{ padding: '8px 20px', background: '#b34700', color: 'white', borderRadius: 8, fontSize: '0.8rem', fontWeight: 700, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
-                {uploadingPoster ? '⏳ Mengupload...' : '📤 Upload Poster'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
-                  onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
-              </label>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Countdowns side by side */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 16 }}>
 
@@ -314,6 +242,75 @@ export default function HomePage() {
           <div style={{ textAlign: 'center', fontSize: '0.72rem', color: '#8a6040', marginTop: 8 }}>SPM 2026 · Batch Salahuddin Al-Ayubi · KUPSIS · {fmtDate(spmDate)}</div>
         </div>
       </div>
+
+      {/* ── Poster Carousel (2-up, below countdowns) ── */}
+      {(posters.length > 0 || loggedIn) && (
+        <div style={{ marginBottom: 20, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+          {posters.length > 0 ? (
+            <>
+              {/* 2-poster row with prev/next arrows */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 10px' }}>
+                {/* Prev arrow */}
+                <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
+                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+
+                {/* Two posters side by side */}
+                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[0, 1].map(offset => {
+                    const idx = (posterIdx + offset) % posters.length
+                    const p = posters[idx]
+                    if (!p) return <div key={offset} />
+                    return (
+                      <div key={p.id} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
+                        <img
+                          src={p.image_url}
+                          alt={p.title || 'Poster'}
+                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8 }}
+                        />
+                        {/* Delete button for logged-in users */}
+                        {loggedIn && (
+                          <button onClick={() => deletePoster(p.id)}
+                            style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(220,38,38,0.85)', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, fontSize: '0.65rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>✕</button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Next arrow */}
+                <button onClick={() => setPosterIdx(i => (i + 1) % posters.length)}
+                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+              </div>
+
+              {/* Dots + Upload */}
+              <div style={{ background: '#1a1a1a', padding: '6px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 5 }}>
+                  {posters.map((_, i) => (
+                    <button key={i} onClick={() => setPosterIdx(i)}
+                      style={{ width: i === posterIdx || i === (posterIdx + 1) % posters.length ? 16 : 7, height: 7, borderRadius: 4, border: 'none', background: i === posterIdx || i === (posterIdx + 1) % posters.length ? '#f97316' : 'rgba(255,255,255,0.3)', cursor: 'pointer', padding: 0, transition: 'width 0.3s' }} />
+                  ))}
+                </div>
+                {loggedIn && (
+                  <label style={{ padding: '3px 10px', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.8)', borderRadius: 6, fontSize: '0.68rem', fontWeight: 600, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
+                    {uploadingPoster ? '⏳...' : '📤 Tambah'}
+                    <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
+                      onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
+                  </label>
+                )}
+              </div>
+            </>
+          ) : (
+            <div style={{ padding: '22px 20px', textAlign: 'center', border: '2px dashed #374151', borderRadius: 14, background: '#111' }}>
+              <div style={{ fontSize: '0.82rem', color: '#6b7280', marginBottom: 10 }}>🖼️ Tiada poster — upload poster pertama</div>
+              <label style={{ padding: '7px 18px', background: '#b34700', color: 'white', borderRadius: 8, fontSize: '0.78rem', fontWeight: 700, cursor: uploadingPoster ? 'wait' : 'pointer', display: 'inline-block' }}>
+                {uploadingPoster ? '⏳ Mengupload...' : '📤 Upload Poster'}
+                <input type="file" accept="image/*" style={{ display: 'none' }} disabled={uploadingPoster}
+                  onChange={e => { if (e.target.files?.[0]) uploadPoster(e.target.files[0]) }} />
+              </label>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Edit Dates Modal */}
       {editDatesModal && (
