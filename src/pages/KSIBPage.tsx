@@ -28,7 +28,7 @@ export default function KSIBPage() {
 
         {/* Row 1: Guru advisors */}
         <OrgRow>
-          <OrgCard role="Guru Penasihat Batch" name="En. Marhani Mohamed @ Nik Mohamed" icon="🏫" color="#1e6091" />
+          <OrgCard role="Guru Penasihat Batch" name="Pn. Marhaini Mohamed @ Nik Mohamed" icon="🏫" color="#1e6091" />
           <OrgCard role="Guru Penyelaras Batch" name="Pn. Aimi Fatihah Muhammad Fauzi" icon="🏫" color="#1e6091" />
         </OrgRow>
 
