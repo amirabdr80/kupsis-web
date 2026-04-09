@@ -250,27 +250,22 @@ export default function HomePage() {
       {(posters.length > 0 || loggedIn) && (
         <div className="poster-wrap" style={{ borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
           {posters.length > 0 ? (
-            <>
-              {/* 2-poster row with prev/next arrows */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}>
+            <div className="poster-inner">
+              {/* 2-poster row with prev/next arrows — fills remaining height */}
+              <div className="poster-image-row">
                 {/* Prev arrow */}
                 <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
-                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                  style={{ flexShrink: 0, alignSelf: 'center', background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
 
                 {/* Two posters side by side */}
-                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div className="poster-grid">
                   {[0, 1].map(offset => {
                     const idx = (posterIdx + offset) % posters.length
                     const p = posters[idx]
                     if (!p) return <div key={offset} />
                     return (
-                      <div key={p.id} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
-                        <img
-                          src={p.image_url}
-                          alt={p.title || 'Poster'}
-                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8 }}
-                        />
-                        {/* Delete button for logged-in users */}
+                      <div key={p.id} className="poster-slot">
+                        <img src={p.image_url} alt={p.title || 'Poster'} />
                         {loggedIn && (
                           <button onClick={() => deletePoster(p.id)}
                             style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(220,38,38,0.85)', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, fontSize: '0.65rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>✕</button>
@@ -282,7 +277,7 @@ export default function HomePage() {
 
                 {/* Next arrow */}
                 <button onClick={() => setPosterIdx(i => (i + 1) % posters.length)}
-                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 26, height: 26, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+                  style={{ flexShrink: 0, alignSelf: 'center', background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
               </div>
 
               {/* Dots + Upload */}
@@ -301,7 +296,7 @@ export default function HomePage() {
                   </label>
                 )}
               </div>
-            </>
+            </div>
           ) : (
             <div style={{ padding: '22px 20px', textAlign: 'center', border: '2px dashed #374151', borderRadius: 14, background: '#111' }}>
               <div style={{ fontSize: '0.82rem', color: '#6b7280', marginBottom: 10 }}>🖼️ Tiada poster — upload poster pertama</div>
