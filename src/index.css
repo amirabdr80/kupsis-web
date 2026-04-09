@@ -120,10 +120,11 @@
   gap: 14px;
   margin-bottom: 20px;
   align-items: stretch;
+  min-height: 240px;
 }
 .poster-stats-row .poster-wrap {
   flex-shrink: 0;
-  width: 260px;
+  width: 312px;
   display: flex;
   flex-direction: column;
 }
@@ -161,9 +162,9 @@
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-rows: 1fr 1fr;
   gap: 10px;
-  align-content: start;
+  align-content: stretch;
 }
 
 /* ── Mobile responsive overrides ── */
