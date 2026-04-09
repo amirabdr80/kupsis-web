@@ -245,14 +245,14 @@ export default function HomePage() {
 
       {/* ── Poster Carousel (2-up, below countdowns) ── */}
       {(posters.length > 0 || loggedIn) && (
-        <div style={{ marginBottom: 20, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden', maxWidth: 420, margin: '0 auto 20px' }}>
+        <div style={{ marginBottom: 20, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden', maxWidth: 260, margin: '0 auto 20px' }}>
           {posters.length > 0 ? (
             <>
               {/* 2-poster row with prev/next arrows */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}>
                 {/* Prev arrow */}
                 <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
-                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 26, height: 26, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                  style={{ flexShrink: 0, background: 'rgba(255,255,255,0.15)', color: 'white', border: 'none', borderRadius: '50%', width: 20, height: 20, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
 
                 {/* Two posters side by side */}
                 <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
