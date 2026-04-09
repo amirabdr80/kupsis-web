@@ -26,8 +26,8 @@ export default function GalleryPage() {
     const { data: groupData } = await supabase
       .from('photo_groups')
       .select('*, photos(*)')
-      .order('date', { ascending: true, nullsFirst: false })
-      .order('sort_order', { ascending: true })
+      .order('date', { ascending: false, nullsFirst: false })
+      .order('sort_order', { ascending: false })
     if (groupData) {
       const sorted = groupData.map(g => ({
         ...g,
