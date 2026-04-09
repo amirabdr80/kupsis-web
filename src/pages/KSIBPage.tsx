@@ -100,7 +100,7 @@ export default function KSIBPage() {
           {[
             { subject: 'Matematik',           icon: '📘', color: '#1e6091', persons: ['Pn. Nur Zuriati Abdullah', 'Pn. Azlindayati Azaharudin'] },
             { subject: 'Matematik Tambahan',  icon: '📗', color: '#6d28d9', persons: ['Pn. Siti Fatimah Mohd Nasaruddin', 'Dr. Herman Shah Anuar'] },
-            { subject: 'Biologi',             icon: '📙', color: '#166534', persons: ['Pn. Yati Timan', 'En. Amir Abd Rahim'] },
+            { subject: 'Biologi',             icon: '📙', color: '#166534', persons: ['Pn. Haryati Timan', 'En. Amir Abd Rahim'] },
             { subject: 'Kimia',               icon: '📕', color: '#0e7490', persons: ['Pn. Sayang Nurshahrizleen Ramlan', 'Pn. Syakimah Abd Ghani'] },
             { subject: 'Fizik',               icon: '📔', color: '#92400e', persons: ['Dr. Salsabila Ahmad', 'En. Azmi Abdul Latip'] },
           ].map(({ subject, icon, color, persons }) => (
