@@ -192,33 +192,35 @@ export default function HomePage() {
         <div style={{ marginBottom: 20, borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', background: '#1a1a1a' }}>
           {posters.length > 0 ? (
             <>
-              {/* Image area */}
-              <div style={{ position: 'relative', width: '100%', maxHeight: 520, display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#111', overflow: 'hidden' }}>
+              {/* Image area — centered, max 340px wide, portrait ratio preserved */}
+              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#111', padding: '12px 36px' }}>
+                <div style={{ position: 'relative', width: '100%', maxWidth: 340 }}>
                 <img
                   key={posters[posterIdx]?.id}
                   src={posters[posterIdx]?.image_url}
                   alt={posters[posterIdx]?.title || 'Poster'}
-                  style={{ width: '100%', maxHeight: 520, objectFit: 'contain', display: 'block', transition: 'opacity 0.4s ease' }}
+                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8, transition: 'opacity 0.4s ease' }}
                 />
                 {/* Left arrow */}
                 {posters.length > 1 && (
                   <button onClick={() => setPosterIdx(i => (i - 1 + posters.length) % posters.length)}
-                    style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 38, height: 38, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>‹</button>
+                    style={{ position: 'absolute', left: -18, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>‹</button>
                 )}
                 {/* Right arrow */}
                 {posters.length > 1 && (
                   <button onClick={() => setPosterIdx(i => (i + 1) % posters.length)}
-                    style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 38, height: 38, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>›</button>
+                    style={{ position: 'absolute', right: -18, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>›</button>
                 )}
                 {/* Dots */}
                 {posters.length > 1 && (
-                  <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6, zIndex: 2 }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8 }}>
                     {posters.map((_, i) => (
                       <button key={i} onClick={() => setPosterIdx(i)}
-                        style={{ width: i === posterIdx ? 20 : 8, height: 8, borderRadius: 4, border: 'none', background: i === posterIdx ? '#f97316' : 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, transition: 'width 0.3s, background 0.3s' }} />
+                        style={{ width: i === posterIdx ? 20 : 8, height: 8, borderRadius: 4, border: 'none', background: i === posterIdx ? '#f97316' : 'rgba(255,255,255,0.35)', cursor: 'pointer', padding: 0, transition: 'width 0.3s, background 0.3s' }} />
                     ))}
                   </div>
                 )}
+                </div>{/* end inner wrapper */}
               </div>
 
               {/* Controls bar for logged-in users */}
