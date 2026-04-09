@@ -57,6 +57,7 @@ export default function KSIBPage() {
           <OrgCard role="Setiausaha" name="Pn. Nur Zuriati Abdullah" icon="📋" color="#166534" small />
           <OrgCard role="Naib Setiausaha" name="Pn. Siti Fatimah Mohd Nasaruddin" icon="📋" color="#166534" small />
         </OrgRow>
+
       </div>
 
       {/* ══════════════════════════════════════════════
@@ -67,11 +68,11 @@ export default function KSIBPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
           {[
-            { kelas: '5 Waja', persons: ['Pn. Syakirah Abd Ghani', 'Pn. Sayang Nurshahrizleen Ramlan'] },
-            { kelas: '5 Nilam', persons: ['Pn. Siti Fatimah Mohd Nasaruddin'] },
-            { kelas: '5 Juara', persons: ['Pn. Azlindayati Azizaharudin', 'Pn. Nur Zuriati Abdullah'] },
-            { kelas: '5 Bajet', persons: ['Pn. Habibah Zainuddin', 'Pn. Saidatun Atikah', 'Pn. Fauzana Nadiah Hussain'] },
-            { kelas: '5 Fizik', persons: ['Dr. Julinawati Suanda'] },
+            { kelas: '5 Juara', persons: ['Pn. Azlindayati Azaharudin', 'Pn. Nur Zuraiti Abdullah'] },
+            { kelas: '5 Rajin', persons: ['Pn. Habibah Zainuddin', 'Pn. Saidatun Atikah', 'Pn. Fauzana Nadiah Hussain'] },
+            { kelas: '5 Fikir', persons: ['Dr. Julinawati Suanda'] },
+            { kelas: '5 Waja',  persons: ['Pn. Syakimah Abd Ghani', 'Pn. Sayang Nurshahrizleen Ramlan'] },
+            { kelas: '5 Nekad', persons: ['Pn. Siti Fatimah Mohd Nasaruddin'] },
           ].map(({ kelas, persons }) => (
             <div key={kelas} style={{
               background: 'linear-gradient(135deg, #fff7ed, #fff)',
@@ -97,11 +98,11 @@ export default function KSIBPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
           {[
-            { subject: 'Matematik', icon: '📐', color: '#1e6091', persons: ['Pn. Nur Zuriati Abdullah', 'Pn. Azlindayati Azizaharudin'] },
-            { subject: 'Add Maths',  icon: '➕', color: '#6d28d9', persons: ['Pn. Siti Fatimah M.N.', 'Dr. Herman Shah Anuar'] },
-            { subject: 'Biologi',    icon: '🔬', color: '#166534', persons: ['Pn. Haryati Timan', 'En. Amir Abd Rahim'] },
-            { subject: 'Kimia',      icon: '⚗️', color: '#0e7490', persons: ['Pn. Sayang Nurshahrizleen Ramlan', 'Pn. Syakirah Abd Ghani'] },
-            { subject: 'Fizik',      icon: '⚡', color: '#92400e', persons: ['Dr. Sakabila Ahmad', 'En. Azmi Abdul Latip'] },
+            { subject: 'Matematik',           icon: '📘', color: '#1e6091', persons: ['Pn. Nur Zuriati Abdullah', 'Pn. Azlindayati Azaharudin'] },
+            { subject: 'Matematik Tambahan',  icon: '📗', color: '#6d28d9', persons: ['Pn. Siti Fatimah Mohd Nasaruddin', 'Dr. Herman Shah Anuar'] },
+            { subject: 'Biologi',             icon: '📙', color: '#166534', persons: ['Pn. Yati Timan', 'En. Amir Abd Rahim'] },
+            { subject: 'Kimia',               icon: '📕', color: '#0e7490', persons: ['Pn. Sayang Nurshahrizleen Ramlan', 'Pn. Syakimah Abd Ghani'] },
+            { subject: 'Fizik',               icon: '📔', color: '#92400e', persons: ['Dr. Salsabila Ahmad', 'En. Azmi Abdul Latip'] },
           ].map(({ subject, icon, color, persons }) => (
             <div key={subject} style={{
               background: '#fff', borderRadius: 12, padding: '14px 16px',
