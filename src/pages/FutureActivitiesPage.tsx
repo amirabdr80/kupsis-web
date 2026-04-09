@@ -160,8 +160,8 @@ export default function FutureActivitiesPage() {
     const { data } = await supabase
       .from('future_activities')
       .select('*')
-      .order('date', { ascending: false })
-      .order('sort_order', { ascending: false })
+      .order('date', { ascending: true })
+      .order('sort_order', { ascending: true })
     setActivities(data || [])
     setLoading(false)
   }
