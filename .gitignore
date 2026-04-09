@@ -18,5 +18,6 @@ attach_*.mjs
 list_*.mjs
 reset_*.mjs
 seed_*.mjs
+setup_*.mjs
 supabase/photo_seeds/
 supabase/seed_*.sql

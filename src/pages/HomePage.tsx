@@ -27,6 +27,7 @@ export default function HomePage() {
   const [countdown,      setCountdown] = useState(calcCountdown('2026-11-09'))
   const [trialCountdown, setTrial]     = useState(calcCountdown('2026-07-13'))
   const [stats, setStats] = useState({ past: 0, future: 0, photos: 0, donations: 0, perbelanjaan: 0 })
+  const [visitorCount, setVisitorCount] = useState<number | null>(null)
 
   // Edit dates modal
   const [editDatesModal, setEditDatesModal] = useState(false)
@@ -38,6 +39,29 @@ export default function HomePage() {
   const [posters,        setPosters]        = useState<Poster[]>([])
   const [posterIdx,      setPosterIdx]      = useState(0)
   const [uploadingPoster, setUploadingPoster] = useState(false)
+
+  // Visitor counter — increment once per browser session, then display total
+  useEffect(() => {
+    async function trackVisit() {
+      const alreadyCounted = sessionStorage.getItem('ksib_visited')
+      if (!alreadyCounted) {
+        const { data } = await supabase.rpc('increment_visitor_count')
+        if (data != null) {
+          setVisitorCount(data as number)
+          sessionStorage.setItem('ksib_visited', '1')
+          return
+        }
+      }
+      // Already counted this session — just fetch current count
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'visitor_count')
+        .single()
+      if (data) setVisitorCount(parseInt(data.value, 10))
+    }
+    trackVisit()
+  }, [])
 
   // Load posters
   useEffect(() => {
@@ -186,6 +210,21 @@ export default function HomePage() {
         <blockquote>"Sesungguhnya bersama kesusahan itu ada kemudahan. Maka apabila engkau telah selesai (dari sesuatu urusan), tetaplah bekerja keras."</blockquote>
         <cite>— Al-Inshirah 94:6-7 · Semoga ALLAH permudahkan perjalanan SPM 2026 kita</cite>
       </div>
+
+      {/* Visitor counter badge */}
+      {visitorCount != null && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12, marginTop: -8 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: '#fff', border: '1px solid #fed7aa', borderRadius: 20,
+            padding: '4px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
+            fontSize: '0.72rem', color: '#92400e', fontWeight: 600,
+          }}>
+            <span>👁️</span>
+            <span>{visitorCount.toLocaleString('en-MY')} pelawat</span>
+          </div>
+        </div>
+      )}
 
       {/* Countdowns side by side */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 16 }}>
