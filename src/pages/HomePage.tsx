@@ -244,11 +244,11 @@ export default function HomePage() {
       </div>
 
       {/* ── Poster Carousel + Stat Boxes side by side ── */}
-      <div style={{ display: 'flex', gap: 14, marginBottom: 20, alignItems: 'flex-start' }}>
+      <div className="poster-stats-row">
 
       {/* Left: Poster Carousel */}
       {(posters.length > 0 || loggedIn) && (
-        <div style={{ flexShrink: 0, width: 260, borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+        <div className="poster-wrap" style={{ borderRadius: 14, background: '#111', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
           {posters.length > 0 ? (
             <>
               {/* 2-poster row with prev/next arrows */}
@@ -315,8 +315,8 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Right: Stat boxes stacked vertically */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* Right: Stat boxes */}
+      <div className="stats-col">
         <div className="stat-box">
           <div className="stat-num">{countdown.days}</div>
           <div className="stat-label">⏳ Hari Sebelum SPM</div>
