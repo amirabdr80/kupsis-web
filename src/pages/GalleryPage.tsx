@@ -4,6 +4,12 @@ import { supabase, STORAGE_BUCKET } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { PhotoGroup, Photo } from '../types'
 
+const VIDEO_EXTS = ['mp4', 'mov', 'webm', 'avi', 'm4v', 'mkv', '3gp']
+function isVideo(url: string) {
+  const ext = url.split('?')[0].split('.').pop()?.toLowerCase() || ''
+  return VIDEO_EXTS.includes(ext)
+}
+
 export default function GalleryPage() {
   const { canGallery } = useAuth()
   const [groups, setGroups] = useState<PhotoGroup[]>([])
@@ -77,8 +83,10 @@ export default function GalleryPage() {
       const file = files[i]
       const ext  = file.name.split('.').pop()
       const path = `${groupId}/${Date.now()}_${i}.${ext}`
-      const { error: uploadErr } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file)
-      if (uploadErr) continue
+      const { error: uploadErr } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(path, file, { contentType: file.type })
+      if (uploadErr) { console.error(uploadErr); continue }
       const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path)
       await supabase.from('photos').insert({ group_id: groupId, url: urlData.publicUrl, sort_order: existingCount + i })
     }
@@ -125,8 +133,8 @@ export default function GalleryPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary">📷 Galeri Foto Aktiviti</h1>
-          <p className="text-gray-500 text-sm mt-1">{groups.length} kumpulan foto · Batch Salahuddin Al-Ayubi</p>
+          <h1 className="text-2xl font-bold text-primary">📷 Galeri Foto & Video Aktiviti</h1>
+          <p className="text-gray-500 text-sm mt-1">{groups.length} kumpulan · Batch Salahuddin Al-Ayubi</p>
         </div>
         {canGallery && (
           <button onClick={() => setAddingGroup(true)} className="btn-primary flex items-center gap-1">
@@ -203,7 +211,11 @@ export default function GalleryPage() {
                         {group.date && (
                           <p className="text-gray-400 text-xs mt-0.5">{new Date(group.date + 'T00:00:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                         )}
-                        <p className="text-gray-400 text-xs">{(group.photos || []).length} foto</p>
+                        <p className="text-gray-400 text-xs">
+                          {(group.photos || []).filter((p: Photo) => !isVideo(p.url)).length} foto
+                          {(group.photos || []).filter((p: Photo) => isVideo(p.url)).length > 0 &&
+                            ` · ${(group.photos || []).filter((p: Photo) => isVideo(p.url)).length} video`}
+                        </p>
                       </div>
                       {canGallery && (
                         <button
@@ -224,13 +236,13 @@ export default function GalleryPage() {
                       className="btn-secondary flex items-center gap-1 text-xs"
                     >
                       <Upload size={13} />
-                      {uploadingGroupId === group.id ? 'Memuat naik...' : 'Tambah Foto'}
+                      {uploadingGroupId === group.id ? 'Memuat naik...' : 'Tambah Foto/Video'}
                     </button>
                     <input
                       ref={fileRef}
                       type="file"
                       multiple
-                      accept="image/*"
+                      accept="image/*,video/*"
                       className="hidden"
                       onChange={e => e.target.files && uploadPhotos(group.id, e.target.files)}
                     />
@@ -242,19 +254,41 @@ export default function GalleryPage() {
               </div>
 
               {(group.photos || []).length === 0 ? (
-                <p className="text-gray-300 text-sm italic">Tiada foto dalam kumpulan ini.</p>
+                <p className="text-gray-300 text-sm italic">Tiada foto atau video dalam kumpulan ini.</p>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {(group.photos || []).map((ph: Photo) => (
                     <div key={ph.id} className="relative group rounded-lg overflow-hidden bg-gray-100">
                       <div className="aspect-square overflow-hidden">
-                        <img
-                          src={ph.url}
-                          alt={ph.caption || ''}
-                          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                          onClick={() => openLightbox(ph, group.photos || [])}
-                          loading="lazy"
-                        />
+                        {isVideo(ph.url) ? (
+                          <div
+                            className="w-full h-full relative cursor-pointer bg-black"
+                            onClick={() => openLightbox(ph, group.photos || [])}
+                          >
+                            <video
+                              src={ph.url}
+                              className="w-full h-full object-cover"
+                              preload="metadata"
+                              muted
+                              playsInline
+                            />
+                            {/* Play overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors">
+                              <div style={{ background: 'rgba(0,0,0,0.65)', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ color: 'white', fontSize: '1rem', marginLeft: 3 }}>▶</span>
+                              </div>
+                            </div>
+                            <div style={{ position: 'absolute', bottom: 4, left: 4, background: 'rgba(0,0,0,0.6)', color: 'white', fontSize: '0.6rem', padding: '1px 5px', borderRadius: 4, fontWeight: 600 }}>VIDEO</div>
+                          </div>
+                        ) : (
+                          <img
+                            src={ph.url}
+                            alt={ph.caption || ''}
+                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                            onClick={() => openLightbox(ph, group.photos || [])}
+                            loading="lazy"
+                          />
+                        )}
                       </div>
                       {/* Admin controls */}
                       {canGallery && (
@@ -317,7 +351,18 @@ export default function GalleryPage() {
               <ChevronLeft size={24} />
             </button>
             <div className="flex flex-col items-center" onClick={e => e.stopPropagation()}>
-              <img src={currentPhoto.url} alt={currentPhoto.caption || ''} className="max-h-[82vh] max-w-[90vw] object-contain rounded-lg shadow-2xl" />
+              {isVideo(currentPhoto.url) ? (
+                <video
+                  key={currentPhoto.url}
+                  src={currentPhoto.url}
+                  controls
+                  autoPlay
+                  className="max-h-[82vh] max-w-[90vw] rounded-lg shadow-2xl"
+                  style={{ background: '#000' }}
+                />
+              ) : (
+                <img src={currentPhoto.url} alt={currentPhoto.caption || ''} className="max-h-[82vh] max-w-[90vw] object-contain rounded-lg shadow-2xl" />
+              )}
               {currentPhoto.caption && (
                 <div style={{ marginTop: 12, color: 'white', fontSize: '0.9rem', textAlign: 'center', maxWidth: '80vw', background: 'rgba(0,0,0,0.5)', padding: '6px 16px', borderRadius: 8 }}>
                   {currentPhoto.caption}
