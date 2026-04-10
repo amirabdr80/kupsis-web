@@ -171,6 +171,21 @@ export default function GalleryPage() {
         </div>
       )}
 
+      {/* Single shared file input — outside the map so fileRef is stable */}
+      <input
+        ref={fileRef}
+        type="file"
+        multiple
+        accept="image/*,video/*"
+        className="hidden"
+        onChange={e => {
+          if (e.target.files && uploadingGroupId) {
+            uploadPhotos(uploadingGroupId, e.target.files)
+          }
+          e.target.value = '' // reset so same file can be re-selected
+        }}
+      />
+
       {/* Groups */}
       <div className="space-y-8">
         {groups.map(group => {
@@ -238,14 +253,6 @@ export default function GalleryPage() {
                       <Upload size={13} />
                       {uploadingGroupId === group.id ? 'Memuat naik...' : 'Tambah Foto/Video'}
                     </button>
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      multiple
-                      accept="image/*,video/*"
-                      className="hidden"
-                      onChange={e => e.target.files && uploadPhotos(group.id, e.target.files)}
-                    />
                     <button onClick={() => deleteGroup(group.id)} className="btn-danger flex items-center gap-1 text-xs">
                       <Trash2 size={13} /> Padam
                     </button>
