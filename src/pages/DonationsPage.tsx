@@ -73,7 +73,7 @@ export default function DonationsPage() {
   })
 
   // Expand/collapse expense sections
-  const [expanded, setExpanded] = useState<Set<string>>(new Set([...KELAS, 'General']))
+  const [expanded, setExpanded] = useState<Set<string>>(new Set([...KELAS, 'General', 'aktiviti', 'tuition', 'dana_infaq']))
 
   useEffect(() => { load() }, [])
 
@@ -123,13 +123,36 @@ export default function DonationsPage() {
   const totalKeluar = sum(belanjaRecs)
   const baki = totalMasuk - totalKeluar
 
-  // Group expenses by class
+  // Segregate expenses by category type
+  const expAktiviti = belanjaRecs.filter(d => d.category === 'perbelanjaan_aktiviti')
+  const expTuition  = belanjaRecs.filter(d => d.category === 'perbelanjaan_tuition')
+  const expAm       = belanjaRecs.filter(d => !['perbelanjaan_aktiviti', 'perbelanjaan_tuition'].includes(d.category || ''))
+
+  // Group general expenses by class
   const expGroups: Record<string, Donation[]> = { General: [] }
   KELAS.forEach(k => { expGroups[k] = [] })
-  belanjaRecs.forEach(d => {
+  expAm.forEach(d => {
     const g = getExpenseKelas(d.donor_name || '')
     ;(expGroups[g] || expGroups['General']).push(d)
   })
+
+  // All expense sections for Perbelanjaan tab
+  type ExpSection = { key: string; label: string; color: string; bg: string; border: string; recs: Donation[] }
+  const expSections: ExpSection[] = [
+    {
+      key: 'dana_infaq', label: '💙 Dana Infaq', color: '#1d4ed8',
+      bg: '#eff6ff', border: '#dbeafe',
+      recs: [...expAktiviti, ...expTuition].sort((a, b) => (a.date || '').localeCompare(b.date || '')),
+    },
+    ...([...KELAS, 'General'] as KelasKey[]).map(k => ({
+      key: k,
+      label: k === 'General' ? '📋 General' : `🏫 ${k}`,
+      color: k === 'General' ? '#4b5563' : '#b34700',
+      bg:    k === 'General' ? '#f9fafb'  : '#fff7ed',
+      border: '#f3f4f6',
+      recs:  expGroups[k] || [] as Donation[],
+    })),
+  ]
 
   // ── Edit kutipan ──────────────────────────────────────────────────────────
   function openEdit(kelas: string) {
@@ -461,25 +484,22 @@ export default function DonationsPage() {
                 </div>
               )}
 
-              {/* Per-class expense sections */}
-              {([...KELAS, 'General'] as KelasKey[]).map(section => {
-                const recs  = expGroups[section] || []
-                const total = recs.reduce((s, d) => s + Number(d.amount), 0)
-                const open  = expanded.has(section)
+              {/* ── All expense sections ── */}
+              {expSections.map(section => {
+                const total = section.recs.reduce((s, d) => s + Number(d.amount), 0)
+                const open  = expanded.has(section.key)
                 return (
-                  <div key={section} className="card" style={{ marginBottom: 10, padding: 0, overflow: 'hidden' }}>
-                    <div onClick={() => toggleSection(section)} style={{
+                  <div key={section.key} className="card" style={{ marginBottom: 10, padding: 0, overflow: 'hidden' }}>
+                    <div onClick={() => toggleSection(section.key)} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       padding: '10px 14px', cursor: 'pointer',
-                      background: section === 'General' ? '#f9fafb' : '#fff7ed',
-                      borderBottom: open && recs.length > 0 ? '1px solid #f3f4f6' : 'none',
+                      background: section.bg,
+                      borderBottom: open && section.recs.length > 0 ? `1px solid ${section.border}` : 'none',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontWeight: 700, color: section === 'General' ? '#4b5563' : '#b34700', fontSize: '0.88rem' }}>
-                          {section === 'General' ? '📋 General' : `🏫 ${section}`}
-                        </span>
+                        <span style={{ fontWeight: 700, color: section.color, fontSize: '0.88rem' }}>{section.label}</span>
                         <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#dc2626', borderRadius: 999, padding: '1px 7px', fontWeight: 700 }}>
-                          {recs.length} rekod
+                          {section.recs.length} rekod
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -490,7 +510,7 @@ export default function DonationsPage() {
                       </div>
                     </div>
                     {open && (
-                      recs.length === 0 ? (
+                      section.recs.length === 0 ? (
                         <div style={{ padding: '12px 14px', color: '#9ca3af', fontSize: '0.78rem', fontStyle: 'italic' }}>
                           Tiada rekod perbelanjaan.
                         </div>
@@ -498,7 +518,7 @@ export default function DonationsPage() {
                         <div style={{ overflowX: 'auto' }}>
                           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
                             <tbody>
-                              {recs.map(d => (
+                              {section.recs.map(d => (
                                 <tr key={d.id} style={{ borderBottom: '1px solid #f9fafb' }}>
                                   <td style={{ ...tdList, color: '#9ca3af', fontSize: '0.68rem', whiteSpace: 'nowrap', width: 110 }}>{fmtDate(d.date)}</td>
                                   <td style={{ ...tdList, fontWeight: 600, color: '#374151' }}>{d.note || d.donor_name}</td>
