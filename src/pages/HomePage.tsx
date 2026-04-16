@@ -40,6 +40,9 @@ export default function HomePage() {
   const [posterIdx,      setPosterIdx]      = useState(0)
   const [uploadingPoster, setUploadingPoster] = useState(false)
 
+  // Batch section carousel (batch photo + infaq poster)
+  const [batchSlide, setBatchSlide] = useState(0)
+
   // Visitor counter — increment once per browser session, then display total
   useEffect(() => {
     async function trackVisit() {
@@ -82,6 +85,18 @@ export default function HomePage() {
     const t = setInterval(() => setPosterIdx(i => (i + 1) % posters.length), 5000)
     return () => clearInterval(t)
   }, [posters.length])
+
+  // Batch section carousel — auto-rotate every 4 seconds
+  const infaqPoster = posters.find(p => p.title?.toLowerCase().includes('infaq'))
+  const batchSlides = [
+    { type: 'batch' as const },
+    ...(infaqPoster ? [{ type: 'infaq' as const, poster: infaqPoster }] : []),
+  ]
+  useEffect(() => {
+    if (batchSlides.length <= 1) return
+    const t = setInterval(() => setBatchSlide(i => (i + 1) % batchSlides.length), 4000)
+    return () => clearInterval(t)
+  }, [batchSlides.length])
 
   async function uploadPoster(file: File) {
     setUploadingPoster(true)
@@ -509,44 +524,72 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Right: batch photo + infaq poster side by side */}
-          {(() => {
-            const infaqPoster = posters.find(p => p.title?.toLowerCase().includes('infaq'))
-            return (
-              <div style={{ display: 'grid', gridTemplateColumns: infaqPoster ? '1fr 1fr' : '1fr', gap: 10 }}>
+          {/* Right: auto-rotating carousel — batch photo ↔ infaq poster */}
+          <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.18)', background: '#111', minHeight: 'clamp(260px, 50vw, 460px)' }}>
 
-                {/* Batch photo */}
-                <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', position: 'relative' }}>
-                  <img
-                    src="/batch-saa-2026.jpg"
-                    alt="Batch Salahuddin Al-Ayyubi 2026"
-                    style={{ width: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center 30%', minHeight: 'clamp(220px, 45vw, 420px)' }}
-                  />
-                  <div style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0,
-                    background: 'linear-gradient(to top, rgba(100,30,0,0.85) 0%, transparent 100%)',
-                    padding: '16px 12px 10px',
-                    color: 'white', textAlign: 'center',
-                  }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 0.5 }}>Salahuddin Al-Ayyubi Generation</div>
-                    <div style={{ fontSize: '0.65rem', opacity: 0.85, marginTop: 2 }}>WE ARE UNSTOPPABLE · WE RISE FOR EXCELLENCE</div>
-                  </div>
-                </div>
-
-                {/* Infaq poster — shown once uploaded */}
-                {infaqPoster && (
-                  <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
+            {/* Slides */}
+            {batchSlides.map((slide, i) => (
+              <div
+                key={i}
+                style={{
+                  position: i === 0 ? 'relative' : 'absolute',
+                  inset: 0,
+                  opacity: batchSlide === i ? 1 : 0,
+                  transition: 'opacity 0.7s ease-in-out',
+                  pointerEvents: batchSlide === i ? 'auto' : 'none',
+                }}
+              >
+                {slide.type === 'batch' ? (
+                  <>
                     <img
-                      src={infaqPoster.image_url}
-                      alt={infaqPoster.title || 'Tabung Infaq'}
-                      style={{ width: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center top', minHeight: 'clamp(220px, 45vw, 420px)' }}
+                      src="/batch-saa-2026.jpg"
+                      alt="Batch Salahuddin Al-Ayyubi 2026"
+                      style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center 30%', minHeight: 'clamp(260px, 50vw, 460px)' }}
                     />
-                  </div>
+                    <div style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0,
+                      background: 'linear-gradient(to top, rgba(100,30,0,0.88) 0%, transparent 55%)',
+                      padding: '24px 16px 14px', color: 'white', textAlign: 'center',
+                    }}>
+                      <div style={{ fontSize: 'clamp(0.82rem,2.5vw,1rem)', fontWeight: 800, letterSpacing: 0.5 }}>Salahuddin Al-Ayyubi Generation</div>
+                      <div style={{ fontSize: 'clamp(0.65rem,2vw,0.78rem)', opacity: 0.85, marginTop: 3 }}>WE ARE UNSTOPPABLE · WE RISE FOR EXCELLENCE</div>
+                    </div>
+                  </>
+                ) : (
+                  <img
+                    src={(slide as { type: 'infaq'; poster: Poster }).poster.image_url}
+                    alt="Tabung Infaq KSIB SAA"
+                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center top', minHeight: 'clamp(260px, 50vw, 460px)' }}
+                  />
                 )}
-
               </div>
-            )
-          })()}
+            ))}
+
+            {/* Prev / Next arrows */}
+            {batchSlides.length > 1 && (
+              <>
+                <button
+                  onClick={() => setBatchSlide(i => (i - 1 + batchSlides.length) % batchSlides.length)}
+                  style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>‹</button>
+                <button
+                  onClick={() => setBatchSlide(i => (i + 1) % batchSlides.length)}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.45)', color: 'white', border: 'none', borderRadius: '50%', width: 34, height: 34, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>›</button>
+              </>
+            )}
+
+            {/* Dot indicators */}
+            {batchSlides.length > 1 && (
+              <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6, zIndex: 2 }}>
+                {batchSlides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setBatchSlide(i)}
+                    style={{ width: batchSlide === i ? 20 : 8, height: 8, borderRadius: 4, border: 'none', background: batchSlide === i ? '#f97316' : 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, transition: 'all 0.3s' }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
 
         </div>
       </div>
