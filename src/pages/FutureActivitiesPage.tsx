@@ -27,6 +27,18 @@ interface Section {
 }
 
 const SECTIONS: Section[] = [
+  // ── Sekolah / SMSKP ──────────────────────────────────────────────────────
+  {
+    key: 'sekolah',
+    emoji: '🏫',
+    label: 'Sekolah / SMSKP',
+    borderColor: '#4338ca',
+    bgColor: '#eef2ff',
+    headerBg: 'linear-gradient(135deg, #4338ca, #6366f1)',
+    champions: [],
+  },
+
+  // ── Subjek (KSIB) ─────────────────────────────────────────────────────────
   {
     key: 'matematik',
     emoji: '📘',
@@ -72,6 +84,8 @@ const SECTIONS: Section[] = [
     headerBg: 'linear-gradient(135deg, #0e7490, #06b6d4)',
     champions: ['Dr. Salsabila Ahmad', 'En. Azmi Abdul Latip'],
   },
+
+  // ── Lain-lain ──────────────────────────────────────────────────────────────
   {
     key: 'peperiksaan',
     emoji: '🎓',
@@ -83,7 +97,7 @@ const SECTIONS: Section[] = [
   },
   {
     key: 'kelas_tambahan',
-    emoji: '🏫',
+    emoji: '👩‍🏫',
     label: 'Kelas Tambahan Guru KUPSIS',
     borderColor: '#be185d',
     bgColor: '#fdf2f8',
@@ -237,7 +251,7 @@ export default function FutureActivitiesPage() {
           🔮 Aktiviti Akan Datang
         </h1>
         <p style={{ color: '#9ca3af', fontSize: '0.85rem' }}>
-          {totalCount} aktiviti dirancang · Disusun mengikut subjek &amp; champion
+          {totalCount} aktiviti dirancang · Disusun mengikut: Sekolah · Subjek · General
         </p>
       </div>
 
