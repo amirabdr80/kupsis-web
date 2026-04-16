@@ -94,7 +94,7 @@ export default function HomePage() {
   ]
   useEffect(() => {
     if (batchSlides.length <= 1) return
-    const t = setInterval(() => setBatchSlide(i => (i + 1) % batchSlides.length), 4000)
+    const t = setInterval(() => setBatchSlide(i => (i + 1) % batchSlides.length), 7000)
     return () => clearInterval(t)
   }, [batchSlides.length])
 
@@ -535,7 +535,7 @@ export default function HomePage() {
                   position: i === 0 ? 'relative' : 'absolute',
                   inset: 0,
                   opacity: batchSlide === i ? 1 : 0,
-                  transition: 'opacity 0.7s ease-in-out',
+                  transition: 'opacity 1.2s ease-in-out',
                   pointerEvents: batchSlide === i ? 'auto' : 'none',
                 }}
               >
@@ -559,7 +559,7 @@ export default function HomePage() {
                   <img
                     src={(slide as { type: 'infaq'; poster: Poster }).poster.image_url}
                     alt="Tabung Infaq KSIB SAA"
-                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center top', minHeight: 'clamp(260px, 50vw, 460px)' }}
+                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', objectPosition: 'center center', minHeight: 'clamp(260px, 50vw, 460px)', background: '#fff' }}
                   />
                 )}
               </div>
