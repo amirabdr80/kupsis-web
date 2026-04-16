@@ -192,11 +192,14 @@ export default function HomePage() {
           display: 'flex', alignItems: 'center', padding: '0 clamp(16px, 5vw, 32px)'
         }}>
           <div style={{ color: 'white' }}>
-            <div style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)', fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
-              SM Sains Kubang Pasu
+            <div style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.78rem)', opacity: 0.85, marginBottom: 3, letterSpacing: 1, textTransform: 'uppercase', textShadow: '0 1px 4px rgba(0,0,0,0.5)', fontWeight: 700 }}>
+              KSIB · Kumpulan Sokongan Ibu Bapa
             </div>
-            <div style={{ fontSize: 'clamp(0.72rem, 3vw, 0.9rem)', opacity: 0.9, marginTop: 4, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+            <div style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)', fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               Batch Salahuddin Al-Ayubi · SPM 2026
+            </div>
+            <div style={{ fontSize: 'clamp(0.72rem, 3vw, 0.88rem)', opacity: 0.9, marginTop: 4, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              SM Sains Kubang Pasu (KUPSIS)
             </div>
             <div style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', opacity: 0.75, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
               Batu 19, Jalan Kodiang, Jitra, Kedah
@@ -484,18 +487,20 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Info + Batch Photo */}
+      {/* Info + Batch Photo + Infaq Poster */}
       <div className="card" style={{ marginTop: 16 }}>
         <div className="card-title"><span className="icon">ℹ️</span> Maklumat Batch</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, alignItems: 'center' }}>
+
+          {/* Left: info table */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {[
-              ['Nama Batch', 'Salahuddin Al-Ayubi'],
-              ['Tahun Peperiksaan', 'SPM 2026'],
-              ['Sekolah', 'SM Sains Kubang Pasu (KUPSIS)'],
-              ['Lokasi', 'Batu 19, Jalan Kodiang, Jitra, Kedah'],
-              ['Badan Ibu Bapa', 'KSIB (Kelab Sokongan Ibu Bapa)'],
-              ['Tarikh SPM', '9 November 2026'],
+              ['Nama Batch',       'Salahuddin Al-Ayubi'],
+              ['Tahun Peperiksaan','SPM 2026'],
+              ['Badan Ibu Bapa',   'KSIB (Kumpulan Sokongan Ibu Bapa)'],
+              ['Sekolah',          'SM Sains Kubang Pasu (KUPSIS)'],
+              ['Lokasi',           'Batu 19, Jalan Kodiang, Jitra, Kedah'],
+              ['Tarikh SPM',       '9 November 2026'],
             ].map(([label, val]) => (
               <div key={label} style={{ display: 'flex', gap: 6, fontSize: 'clamp(0.78rem, 3vw, 0.9rem)', flexWrap: 'wrap' }}>
                 <span style={{ fontWeight: 600, color: '#b34700', minWidth: 'clamp(110px, 30vw, 160px)', flexShrink: 0 }}>{label}:</span>
@@ -503,22 +508,46 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', position: 'relative' }}>
-            <img
-              src="/batch-saa-2026.jpg"
-              alt="Batch Salahuddin Al-Ayyubi 2026"
-              style={{ width: '100%', display: 'block', objectFit: 'cover' }}
-            />
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(100,30,0,0.85) 0%, transparent 100%)',
-              padding: '16px 12px 10px',
-              color: 'white', textAlign: 'center',
-            }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 0.5 }}>Salahuddin Al-Ayyubi Generation</div>
-              <div style={{ fontSize: '0.65rem', opacity: 0.85, marginTop: 2 }}>WE ARE UNSTOPPABLE · WE RISE FOR EXCELLENCE</div>
-            </div>
-          </div>
+
+          {/* Right: batch photo + infaq poster side by side */}
+          {(() => {
+            const infaqPoster = posters.find(p => p.title?.toLowerCase().includes('infaq'))
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: infaqPoster ? '1fr 1fr' : '1fr', gap: 10 }}>
+
+                {/* Batch photo */}
+                <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', position: 'relative' }}>
+                  <img
+                    src="/batch-saa-2026.jpg"
+                    alt="Batch Salahuddin Al-Ayyubi 2026"
+                    style={{ width: '100%', display: 'block', objectFit: 'cover' }}
+                  />
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    background: 'linear-gradient(to top, rgba(100,30,0,0.85) 0%, transparent 100%)',
+                    padding: '16px 12px 10px',
+                    color: 'white', textAlign: 'center',
+                  }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 0.5 }}>Salahuddin Al-Ayyubi Generation</div>
+                    <div style={{ fontSize: '0.65rem', opacity: 0.85, marginTop: 2 }}>WE ARE UNSTOPPABLE · WE RISE FOR EXCELLENCE</div>
+                  </div>
+                </div>
+
+                {/* Infaq poster — shown once uploaded */}
+                {infaqPoster && (
+                  <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
+                    <img
+                      src={infaqPoster.image_url}
+                      alt={infaqPoster.title || 'Tabung Infaq'}
+                      style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                    />
+                  </div>
+                )}
+
+              </div>
+            )
+          })()}
+
         </div>
       </div>
     </div>
