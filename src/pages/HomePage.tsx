@@ -520,7 +520,7 @@ export default function HomePage() {
                   <img
                     src="/batch-saa-2026.jpg"
                     alt="Batch Salahuddin Al-Ayyubi 2026"
-                    style={{ width: '100%', display: 'block', objectFit: 'cover' }}
+                    style={{ width: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center 30%', minHeight: 'clamp(220px, 45vw, 420px)' }}
                   />
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -539,7 +539,7 @@ export default function HomePage() {
                     <img
                       src={infaqPoster.image_url}
                       alt={infaqPoster.title || 'Tabung Infaq'}
-                      style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                      style={{ width: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center top', minHeight: 'clamp(220px, 45vw, 420px)' }}
                     />
                   </div>
                 )}

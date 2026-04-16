@@ -31,8 +31,8 @@ export default function Navbar() {
             <img src="/logo-kupsis.png" alt="Logo KUPSIS" width="75" height="75" style={{ objectFit: 'contain' }} />
           </div>
           <div className="text-white">
-            <div className="font-bold text-base leading-tight">SM Sains Kubang Pasu — Batch Salahuddin Al-Ayubi</div>
-            <div className="text-white/80 text-xs mt-0.5">Sekolah Menengah Sains Kubang Pasu (KUPSIS) &nbsp;|&nbsp; Batu 19, Jalan Kodiang, Jitra, Kedah &nbsp;|&nbsp; SPM 2026</div>
+            <div className="font-bold text-base leading-tight">Batch Salahuddin Al-Ayubi — KSIB SAA</div>
+            <div className="text-white/80 text-xs mt-0.5">SM Sains Kubang Pasu (KUPSIS) &nbsp;|&nbsp; Batu 19, Jalan Kodiang, Jitra, Kedah &nbsp;|&nbsp; SPM 2026</div>
           </div>
         </div>
         <div className="hidden md:flex flex-col items-center gap-1">
